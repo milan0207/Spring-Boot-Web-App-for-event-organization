@@ -4,9 +4,8 @@ import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 public class EventService {
     private final EventDao eventDao;
 

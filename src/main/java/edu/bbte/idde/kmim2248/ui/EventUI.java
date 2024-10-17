@@ -7,8 +7,6 @@ import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 
 public class EventUI {
@@ -69,117 +67,104 @@ public class EventUI {
 
         frame.add(panel, BorderLayout.CENTER);
 
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        saveButton.addActionListener(e -> {
 
-                if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "All fields must be filled!");
-                    return;
-                }
+            if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "All fields must be filled!");
+                return;
+            }
 
-                String name = nameField.getText();
-                String place = placeField.getText();
-                String date = dateField.getText();
-                boolean online = onlineCheckBox.isSelected();
-                int duration = Integer.parseInt(durationField.getText());
+            String name = nameField.getText();
+            String place = placeField.getText();
+            String date = dateField.getText();
+            boolean online = onlineCheckBox.isSelected();
+            int duration = Integer.parseInt(durationField.getText());
 
-                Event event = new Event();
-                event.setName(name);
-                event.setPlace(place);
-                event.setDate(date);
-                event.setOnline(online);
-                event.setDuration(duration);
+            Event event = new Event();
+            event.setName(name);
+            event.setPlace(place);
+            event.setDate(date);
+            event.setOnline(online);
+            event.setDuration(duration);
 
-                nameField.setText("");
-                placeField.setText("");
-                dateField.setText("");
-                onlineCheckBox.setSelected(false);
-                durationField.setText("");
+            nameField.setText("");
+            placeField.setText("");
+            dateField.setText("");
+            onlineCheckBox.setSelected(false);
+            durationField.setText("");
 
 
-                eventService.createEvent(event);
+            eventService.createEvent(event);
 
+            refreshList();
+            JOptionPane.showMessageDialog(frame, "Event saved successfully!");
+        });
+
+        findButton.addActionListener(e -> {
+            if (findField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Field must be filled!");
+                return;
+            }
+            String name = findField.getText();
+            Event event = eventService.findEventByName(name);
+            if (event != null) {
+                JOptionPane.showMessageDialog(frame,
+                        "Event found");
+                nameField.setText(event.getName());
+                placeField.setText(event.getPlace());
+                dateField.setText(event.getDate());
+                onlineCheckBox.setSelected(event.getOnline());
+                durationField.setText(String.valueOf(event.getDuration()));
+            } else {
+                JOptionPane.showMessageDialog(frame, "Event not found.");
+            }
+        });
+
+        updateButton.addActionListener(e -> {
+            if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "All fields must be filled!");
+                return;
+            }
+            String name = nameField.getText();
+            String place = placeField.getText();
+            String date = dateField.getText();
+            boolean online = onlineCheckBox.isSelected();
+            int duration = Integer.parseInt(durationField.getText());
+
+            Event event = new Event();
+            event.setName(name);
+            event.setPlace(place);
+            event.setDate(date);
+            event.setOnline(online);
+            event.setDuration(duration);
+
+            nameField.setText("");
+            placeField.setText("");
+            dateField.setText("");
+            onlineCheckBox.setSelected(false);
+            durationField.setText("");
+
+            try {
+                eventService.updateEvent(event);
+                JOptionPane.showMessageDialog(frame, "Event updated successfully!");
                 refreshList();
-                JOptionPane.showMessageDialog(frame, "Event saved successfully!");
+            } catch (EventNotFoundException eventNotFoundException) {
+                JOptionPane.showMessageDialog(frame, "Event not found.");
             }
         });
 
-        findButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (findField.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                    return;
-                }
-                String name = findField.getText();
-                Event event = eventService.findEventByName(name);
-                if (event != null) {
-                    JOptionPane.showMessageDialog(frame,
-                            "Event found");
-                    nameField.setText(event.getName());
-                    placeField.setText(event.getPlace());
-                    dateField.setText(event.getDate());
-                    onlineCheckBox.setSelected(event.getOnline());
-                    durationField.setText(String.valueOf(event.getDuration()));
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Event not found.");
-                }
+        deleteButton.addActionListener(e -> {
+            if (nameField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Name field must be filled!");
+                return;
             }
-        });
-
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "All fields must be filled!");
-                    return;
-                }
-                String name = nameField.getText();
-                String place = placeField.getText();
-                String date = dateField.getText();
-                boolean online = onlineCheckBox.isSelected();
-                int duration = Integer.parseInt(durationField.getText());
-
-                Event event = new Event();
-                event.setName(name);
-                event.setPlace(place);
-                event.setDate(date);
-                event.setOnline(online);
-                event.setDuration(duration);
-
-                nameField.setText("");
-                placeField.setText("");
-                dateField.setText("");
-                onlineCheckBox.setSelected(false);
-                durationField.setText("");
-
-                try {
-                    eventService.updateEvent(event);
-                    JOptionPane.showMessageDialog(frame, "Event updated successfully!");
-                    refreshList();
-                } catch (EventNotFoundException eventNotFoundException) {
-                    JOptionPane.showMessageDialog(frame, "Event not found.");
-                }
-            }
-
-        });
-
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (nameField.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Name field must be filled!");
-                    return;
-                }
-                String name = nameField.getText();
-                try {
-                    eventService.deleteEvent(name);
-                    JOptionPane.showMessageDialog(frame, "Event deleted successfully!");
-                    refreshList();
-                } catch (EventNotFoundException eventNotFoundException) {
-                    JOptionPane.showMessageDialog(frame, "Event not found.");
-                }
+            String name = nameField.getText();
+            try {
+                eventService.deleteEvent(name);
+                JOptionPane.showMessageDialog(frame, "Event deleted successfully!");
+                refreshList();
+            } catch (EventNotFoundException eventNotFoundException) {
+                JOptionPane.showMessageDialog(frame, "Event not found.");
             }
         });
 
