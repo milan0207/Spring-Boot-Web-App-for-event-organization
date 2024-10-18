@@ -120,7 +120,7 @@ public class EventUI {
                 }
             }
             String name = findField.getText();
-            Event event = null;
+            Event event ;
             try {
                 event = eventService.findEventByName(name);
             } catch (EventNotFoundException ex) {
