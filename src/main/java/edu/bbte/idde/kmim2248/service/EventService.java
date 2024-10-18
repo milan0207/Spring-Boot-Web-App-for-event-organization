@@ -30,7 +30,7 @@ public class EventService {
         return eventDao.getAllEvents();
     }
 
-    public Event findEventByName(String name) {
+    public Event findEventByName(String name) throws EventNotFoundException {
         return eventDao.findByName(name).orElse(null);
     }
 }

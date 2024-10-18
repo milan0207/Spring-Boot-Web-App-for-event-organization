@@ -1,5 +1,6 @@
 package edu.bbte.idde.kmim2248.ui;
 
+import edu.bbte.idde.kmim2248.exception.FieldsEmpty;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
@@ -30,7 +31,7 @@ public class EventUI {
         JTextField nameField = new JTextField();
         JLabel placeLabel = new JLabel("Place:");
         JTextField placeField = new JTextField();
-        JLabel dateLabel = new JLabel("Date:");
+        JLabel dateLabel = new JLabel("Date: (if left empty todays date will be applied)");
         JTextField dateField = new JTextField();
         JLabel onlineLabel = new JLabel("Online:");
         JCheckBox onlineCheckBox = new JCheckBox();
@@ -69,9 +70,18 @@ public class EventUI {
 
         saveButton.addActionListener(e -> {
 
-            if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "All fields must be filled!");
-                return;
+            if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || durationField.getText().isEmpty()) {
+
+                try {
+                    JOptionPane.showMessageDialog(frame, "Field must be filled!");
+                    throw new FieldsEmpty("Field must be filled!");
+                } catch (FieldsEmpty ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            if(dateField.getText().isEmpty()){
+                dateField.setText(java.time.LocalDate.now().toString());
             }
 
             String name = nameField.getText();
@@ -102,11 +112,22 @@ public class EventUI {
 
         findButton.addActionListener(e -> {
             if (findField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                return;
+                try {
+                    JOptionPane.showMessageDialog(frame, "Field must be filled!");
+                    throw new FieldsEmpty("Field must be filled!");
+                } catch (FieldsEmpty ex) {
+                    throw new RuntimeException(ex);
+                }
             }
             String name = findField.getText();
-            Event event = eventService.findEventByName(name);
+            Event event = null;
+            try {
+                event = eventService.findEventByName(name);
+            } catch (EventNotFoundException ex) {
+                JOptionPane.showMessageDialog(frame, "Event not found!");
+                throw new RuntimeException(ex);
+
+            }
             if (event != null) {
                 JOptionPane.showMessageDialog(frame,
                         "Event found");
@@ -115,8 +136,6 @@ public class EventUI {
                 dateField.setText(event.getDate());
                 onlineCheckBox.setSelected(event.getOnline());
                 durationField.setText(String.valueOf(event.getDuration()));
-            } else {
-                JOptionPane.showMessageDialog(frame, "Event not found.");
             }
         });
 

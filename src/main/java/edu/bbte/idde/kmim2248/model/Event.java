@@ -7,7 +7,6 @@ public class Event {
     private Boolean online;
     private int duration;
 
-    // Getters and Setters
     public String getName() {
         return name;
     }

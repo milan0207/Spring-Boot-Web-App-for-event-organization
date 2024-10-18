@@ -10,6 +10,6 @@ public interface EventDao {
     void save(Event event);
     void update(Event event) throws EventNotFoundException;
     void delete(String eventName) throws EventNotFoundException;
-    Optional<Event> findByName(String eventName);
+    Optional<Event> findByName(String eventName) throws EventNotFoundException;
     Map<String, Event> getAllEvents();
 }

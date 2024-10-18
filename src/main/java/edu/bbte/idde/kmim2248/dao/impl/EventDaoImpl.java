@@ -31,11 +31,14 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
-    public Optional<Event> findByName(String eventName) {
+    public Optional<Event> findByName(String eventName) throws EventNotFoundException {
+        if(!eventMap.containsKey(eventName)) {
+            throw new EventNotFoundException("Event with name " + eventName + " not found.");
+        }
         return Optional.ofNullable(eventMap.get(eventName));
     }
 
     public Map<String, Event> getAllEvents() {
-        return eventMap; // Visszaadja az összes eseményt
+        return eventMap;
     }
 }
