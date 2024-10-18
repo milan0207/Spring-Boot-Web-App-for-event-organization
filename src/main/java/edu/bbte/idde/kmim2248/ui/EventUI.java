@@ -1,6 +1,6 @@
 package edu.bbte.idde.kmim2248.ui;
 
-import edu.bbte.idde.kmim2248.exception.FieldsEmpty;
+import edu.bbte.idde.kmim2248.exception.FieldsEmptyException;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
@@ -74,8 +74,8 @@ public class EventUI {
 
                 try {
                     JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                    throw new FieldsEmpty("Field must be filled!");
-                } catch (FieldsEmpty ex) {
+                    throw new FieldsEmptyException("Field must be filled!");
+                } catch (FieldsEmptyException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -114,8 +114,8 @@ public class EventUI {
             if (findField.getText().isEmpty()) {
                 try {
                     JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                    throw new FieldsEmpty("Field must be filled!");
-                } catch (FieldsEmpty ex) {
+                    throw new FieldsEmptyException("Field must be filled!");
+                } catch (FieldsEmptyException ex) {
                     throw new RuntimeException(ex);
                 }
             }
