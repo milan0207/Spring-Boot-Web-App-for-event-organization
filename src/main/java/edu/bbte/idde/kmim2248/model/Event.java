@@ -1,9 +1,11 @@
 package edu.bbte.idde.kmim2248.model;
 
+import java.time.LocalDate;
+
 public class Event {
     private String name;
     private String place;
-    private String date;
+    private LocalDate date;
     private Boolean online;
     private int duration;
 
@@ -23,11 +25,11 @@ public class Event {
         this.place = place;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

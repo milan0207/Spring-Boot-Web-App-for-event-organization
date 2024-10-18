@@ -1,13 +1,13 @@
 package edu.bbte.idde.kmim2248.ui;
 
-import edu.bbte.idde.kmim2248.exception.FieldsEmptyException;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
-import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.Map;
 
 public class EventUI {
@@ -72,27 +72,29 @@ public class EventUI {
 
             if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || durationField.getText().isEmpty()) {
 
-                try {
                     JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                    throw new FieldsEmptyException("Field must be filled!");
-                } catch (FieldsEmptyException ex) {
-                    throw new RuntimeException(ex);
-                }
             }
 
-            if(dateField.getText().isEmpty()){
-                dateField.setText(java.time.LocalDate.now().toString());
+            if (dateField.getText().isEmpty()) {
+                dateField.setText(LocalDate.now().toString());
             }
 
             String name = nameField.getText();
             String place = placeField.getText();
-            String date = dateField.getText();
+            String stringDate = dateField.getText();
             boolean online = onlineCheckBox.isSelected();
             int duration = Integer.parseInt(durationField.getText());
 
             Event event = new Event();
             event.setName(name);
             event.setPlace(place);
+            LocalDate date = null;
+            try {
+                date = LocalDate.parse(stringDate);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+
             event.setDate(date);
             event.setOnline(online);
             event.setDuration(duration);
@@ -112,20 +114,16 @@ public class EventUI {
 
         findButton.addActionListener(e -> {
             if (findField.getText().isEmpty()) {
-                try {
-                    JOptionPane.showMessageDialog(frame, "Field must be filled!");
-                    throw new FieldsEmptyException("Field must be filled!");
-                } catch (FieldsEmptyException ex) {
-                    throw new RuntimeException(ex);
-                }
+                JOptionPane.showMessageDialog(frame, "Field must be filled!");
+                return;
             }
             String name = findField.getText();
-            Event event ;
+            Event event = null;
             try {
                 event = eventService.findEventByName(name);
             } catch (EventNotFoundException ex) {
                 JOptionPane.showMessageDialog(frame, "Event not found!");
-                throw new RuntimeException(ex);
+                ex.printStackTrace();
 
             }
             if (event != null) {
@@ -133,7 +131,8 @@ public class EventUI {
                         "Event found");
                 nameField.setText(event.getName());
                 placeField.setText(event.getPlace());
-                dateField.setText(event.getDate());
+                String stringDate = event.getDate().toString();
+                dateField.setText(stringDate);
                 onlineCheckBox.setSelected(event.getOnline());
                 durationField.setText(String.valueOf(event.getDuration()));
             }
@@ -146,13 +145,20 @@ public class EventUI {
             }
             String name = nameField.getText();
             String place = placeField.getText();
-            String date = dateField.getText();
+            String stringDate = dateField.getText();
             boolean online = onlineCheckBox.isSelected();
             int duration = Integer.parseInt(durationField.getText());
 
             Event event = new Event();
             event.setName(name);
             event.setPlace(place);
+
+            LocalDate date = null;
+            try {
+                date = LocalDate.parse(stringDate);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             event.setDate(date);
             event.setOnline(online);
             event.setDuration(duration);

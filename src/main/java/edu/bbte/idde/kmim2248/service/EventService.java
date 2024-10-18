@@ -2,7 +2,7 @@ package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.model.Event;
-import edu.bbte.idde.kmim2248.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 
 import java.util.Map;
 
