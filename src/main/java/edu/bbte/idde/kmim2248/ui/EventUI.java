@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 public class EventUI {
@@ -91,8 +92,9 @@ public class EventUI {
             LocalDate date = null;
             try {
                 date = LocalDate.parse(stringDate);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
+            } catch ( DateTimeParseException ex){
+                JOptionPane.showMessageDialog(frame, "Date format not valid");
+                ex.printStackTrace();
             }
 
             event.setDate(date);
@@ -156,8 +158,9 @@ public class EventUI {
             LocalDate date = null;
             try {
                 date = LocalDate.parse(stringDate);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
+            } catch ( DateTimeParseException ex){
+                JOptionPane.showMessageDialog(frame, "Date format not valid");
+                ex.printStackTrace();
             }
             event.setDate(date);
             event.setOnline(online);
