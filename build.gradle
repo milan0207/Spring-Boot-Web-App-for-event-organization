@@ -1,3 +1,4 @@
-/*
- * Kiinduló gradle file
- */
+plugins {
+    id 'java'
+}
+
