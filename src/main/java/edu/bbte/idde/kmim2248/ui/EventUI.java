@@ -1,5 +1,6 @@
 package edu.bbte.idde.kmim2248.ui;
 
+import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
@@ -19,7 +20,7 @@ public class EventUI {
         this.eventService = eventService;
     }
 
-    public void createAndShowGUI() {
+    public void createAndShowGUI() throws DaoOperationException {
         JFrame frame = new JFrame("Event Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
@@ -108,9 +109,19 @@ public class EventUI {
             durationField.setText("");
 
 
-            eventService.createEvent(event);
+            try {
+                eventService.createEvent(event);
+            } catch (DaoOperationException ex) {
+                JOptionPane.showMessageDialog(frame, "Error saving event");
+                ex.printStackTrace();
+            }
 
-            refreshList();
+            try {
+                refreshList();
+            } catch (DaoOperationException ex) {
+                JOptionPane.showMessageDialog(frame, "Error refreshing list");
+                ex.printStackTrace();
+            }
             JOptionPane.showMessageDialog(frame, "Event saved successfully!");
         });
 
@@ -123,7 +134,7 @@ public class EventUI {
             Event event = null;
             try {
                 event = eventService.findEventByName(name);
-            } catch (EventNotFoundException ex) {
+            } catch (EventNotFoundException | DaoOperationException ex) {
                 JOptionPane.showMessageDialog(frame, "Event not found!");
                 ex.printStackTrace();
 
@@ -178,6 +189,9 @@ public class EventUI {
                 refreshList();
             } catch (EventNotFoundException eventNotFoundException) {
                 JOptionPane.showMessageDialog(frame, "Event not found.");
+            } catch (DaoOperationException ex) {
+                JOptionPane.showMessageDialog(frame, "Error updating event");
+                ex.printStackTrace();
             }
         });
 
@@ -191,7 +205,7 @@ public class EventUI {
                 eventService.deleteEvent(name);
                 JOptionPane.showMessageDialog(frame, "Event deleted successfully!");
                 refreshList();
-            } catch (EventNotFoundException eventNotFoundException) {
+            } catch (EventNotFoundException | DaoOperationException eventNotFoundException) {
                 JOptionPane.showMessageDialog(frame, "Event not found.");
             }
         });
@@ -215,7 +229,7 @@ public class EventUI {
         frame.setVisible(true);
     }
 
-    private void refreshList() {
+    private void refreshList() throws DaoOperationException {
         Map<String, Event> events = eventService.getAllEvents();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);

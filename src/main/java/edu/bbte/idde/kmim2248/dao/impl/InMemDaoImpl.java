@@ -6,11 +6,11 @@ import edu.bbte.idde.kmim2248.model.Event;
 
 import java.util.*;
 
-public class EventDaoImpl implements EventDao {
+public class InMemDaoImpl implements EventDao {
     private final Map<String, Event> eventMap = new HashMap<>();
 
     @Override
-    public void save(Event event) {
+    public void save(Event event)  {
         eventMap.put(event.getName(), event);
     }
 

@@ -1,4 +1,20 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
+application {
+    mainClassName = 'edu.bbte.idde.kmim2248.EventApplication'
+}
+
+dependencies {
+// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+   runtimeOnly group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
+
+}
+
+repositories {
+    mavenCentral()
+}
