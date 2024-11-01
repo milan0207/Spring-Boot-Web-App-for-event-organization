@@ -1,6 +1,7 @@
 package edu.bbte.idde.kmim2248.ui;
 
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
+import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
@@ -113,6 +114,9 @@ public class EventUI {
                 eventService.createEvent(event);
             } catch (DaoOperationException ex) {
                 JOptionPane.showMessageDialog(frame, "Error saving event");
+                ex.printStackTrace();
+            }catch (EventAlreadyExistsException ex) {
+                JOptionPane.showMessageDialog(frame, "Event already exists");
                 ex.printStackTrace();
             }
 

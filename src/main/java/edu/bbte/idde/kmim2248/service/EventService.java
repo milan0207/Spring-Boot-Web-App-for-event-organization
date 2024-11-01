@@ -2,6 +2,7 @@ package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
+import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
 import edu.bbte.idde.kmim2248.dao.factories.DaoFactory;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
@@ -16,8 +17,14 @@ public class EventService {
         this.eventDao = daoFactory.getEventDAO();
     }
 
-    public void createEvent(Event event) throws DaoOperationException {
-        eventDao.save(event);
+    public void createEvent(Event event) throws DaoOperationException, EventAlreadyExistsException {
+        try {
+            if(eventDao.findByName(event.getName()).isPresent()){
+                throw new EventAlreadyExistsException("Event with name " + event.getName() + " already exists.");
+            }
+        } catch (EventNotFoundException e) {
+            eventDao.save(event);
+        }
     }
 
     public void updateEvent(Event event) throws EventNotFoundException, DaoOperationException{

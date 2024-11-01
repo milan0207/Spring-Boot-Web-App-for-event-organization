@@ -2,6 +2,7 @@ package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
+import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
@@ -34,7 +35,6 @@ public class JdbcDaoImpl implements EventDao {
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
