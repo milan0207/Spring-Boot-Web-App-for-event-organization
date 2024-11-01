@@ -2,11 +2,12 @@ package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
-import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.dao.impl.dataSource.DataSource;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import java.sql.*;
 import java.util.HashMap;
@@ -17,10 +18,7 @@ import java.util.Optional;
 public class JdbcDaoImpl implements EventDao {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcDaoImpl.class);
-
-    private static final String URL = "jdbc:mysql://localhost:3306/eventdb?useSSL=false&serverTimezone=UTC";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "1234";
+    DataSource dataSource = new DataSource();
 
     public JdbcDaoImpl() {
         try {
@@ -33,7 +31,7 @@ public class JdbcDaoImpl implements EventDao {
     @Override
     public void save(Event event) throws DaoOperationException {
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
@@ -53,7 +51,7 @@ public class JdbcDaoImpl implements EventDao {
     @Override
     public void update(Event event) throws EventNotFoundException, DaoOperationException{
         String sql = "UPDATE events SET place = ?, date = ?, online = ?, duration = ? WHERE name = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, event.getPlace());
@@ -77,7 +75,7 @@ public class JdbcDaoImpl implements EventDao {
     @Override
     public void delete(String eventName) throws EventNotFoundException, DaoOperationException{
         String sql = "DELETE FROM events WHERE name = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
@@ -97,7 +95,7 @@ public class JdbcDaoImpl implements EventDao {
     @Override
     public Optional<Event> findByName(String eventName) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
@@ -126,7 +124,7 @@ public class JdbcDaoImpl implements EventDao {
     public Map<String, Event> getAllEvents() throws DaoOperationException{
         String sql = "SELECT * FROM events";
         Map<String, Event> events = new HashMap<>();
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection conn = DataSource.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
