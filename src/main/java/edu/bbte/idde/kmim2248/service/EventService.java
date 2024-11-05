@@ -18,26 +18,26 @@ public class EventService {
     }
 
     public void createEvent(Event event) throws DaoOperationException, EventAlreadyExistsException {
-       if(eventDao.existsByName(event.getName())) {
-           throw new EventAlreadyExistsException("Event with name " + event.getName() + " already exists.");
-       }
-         eventDao.save(event);
+        if (eventDao.existsByName(event.getName())) {
+            throw new EventAlreadyExistsException("Event with name " + event.getName() + " already exists.");
+        }
+        eventDao.save(event);
     }
 
-    public void updateEvent(Event event) throws EventNotFoundException, DaoOperationException{
+    public void updateEvent(Event event) throws EventNotFoundException, DaoOperationException {
         eventDao.update(event);
     }
 
-    public void deleteEvent(String eventName) throws EventNotFoundException, DaoOperationException{
+    public void deleteEvent(String eventName) throws EventNotFoundException, DaoOperationException {
         eventDao.delete(eventName);
     }
 
 
-    public Map<String, Event> getAllEvents() throws DaoOperationException{
+    public Map<String, Event> getAllEvents() throws DaoOperationException {
         return eventDao.getAllEvents();
     }
 
-    public Event findEventByName(String name) throws EventNotFoundException, DaoOperationException{
+    public Event findEventByName(String name) throws EventNotFoundException, DaoOperationException {
         return eventDao.findByName(name).orElse(null);
     }
 }

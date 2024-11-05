@@ -75,7 +75,7 @@ public class EventUI {
 
             if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || durationField.getText().isEmpty()) {
 
-                    JOptionPane.showMessageDialog(frame, "Field must be filled!");
+                JOptionPane.showMessageDialog(frame, "Field must be filled!");
             }
 
             if (dateField.getText().isEmpty()) {
@@ -92,7 +92,7 @@ public class EventUI {
             LocalDate date = null;
             try {
                 date = LocalDate.parse(stringDate);
-            } catch ( DateTimeParseException ex){
+            } catch (DateTimeParseException ex) {
                 JOptionPane.showMessageDialog(frame, "Date format not valid");
                 ex.printStackTrace();
             }
@@ -112,7 +112,7 @@ public class EventUI {
                 JOptionPane.showMessageDialog(frame, "Error saving event");
                 ex.printStackTrace();
                 return;
-            }catch (EventAlreadyExistsException ex) {
+            } catch (EventAlreadyExistsException ex) {
                 JOptionPane.showMessageDialog(frame, "Event already exists");
                 ex.printStackTrace();
                 return;
@@ -141,8 +141,7 @@ public class EventUI {
 
             }
             if (event != null) {
-                JOptionPane.showMessageDialog(frame,
-                        "Event found");
+                JOptionPane.showMessageDialog(frame, "Event found");
                 nameField.setText(event.getName());
                 placeField.setText(event.getPlace());
                 String stringDate = event.getDate().toString();
@@ -153,7 +152,8 @@ public class EventUI {
         });
 
         updateButton.addActionListener(e -> {
-            if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
+            if (nameField.getText().isEmpty() || placeField.getText().isEmpty()
+                    || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "All fields must be filled!");
                 return;
             }
@@ -164,12 +164,10 @@ public class EventUI {
             int duration = Integer.parseInt(durationField.getText());
 
 
-
-
             LocalDate date = null;
             try {
                 date = LocalDate.parse(stringDate);
-            } catch ( DateTimeParseException ex){
+            } catch (DateTimeParseException ex) {
                 JOptionPane.showMessageDialog(frame, "Date format not valid");
                 ex.printStackTrace();
             }

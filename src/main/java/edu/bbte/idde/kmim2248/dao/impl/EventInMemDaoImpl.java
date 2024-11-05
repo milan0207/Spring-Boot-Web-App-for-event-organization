@@ -14,7 +14,7 @@ public class EventInMemDaoImpl implements EventDao {
     private final Map<String, Event> eventMap = new HashMap<>();
 
     @Override
-    public void save(Event event)  {
+    public void save(Event event) {
         eventMap.put(event.getName(), event);
         logger.info("Event saved: {}", event);
     }
@@ -39,7 +39,7 @@ public class EventInMemDaoImpl implements EventDao {
 
     @Override
     public Optional<Event> findByName(String eventName) throws EventNotFoundException {
-        if(!eventMap.containsKey(eventName)) {
+        if (!eventMap.containsKey(eventName)) {
             throw new EventNotFoundException("Event with name " + eventName + " not found.");
         }
         logger.info("Event found: {}", eventName);

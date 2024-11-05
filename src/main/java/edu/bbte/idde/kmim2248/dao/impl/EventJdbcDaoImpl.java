@@ -3,7 +3,7 @@ package edu.bbte.idde.kmim2248.dao.impl;
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.dao.impl.dataSource.DataSource;
+import edu.bbte.idde.kmim2248.dao.impl.datasource.DataSource;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,7 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public void save(Event event) throws DaoOperationException {
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
@@ -49,10 +48,9 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public void update(Event event) throws EventNotFoundException, DaoOperationException{
+    public void update(Event event) throws EventNotFoundException, DaoOperationException {
         String sql = "UPDATE events SET place = ?, date = ?, online = ?, duration = ? WHERE name = ?";
-        try (Connection conn = DataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, event.getPlace());
             stmt.setDate(2, Date.valueOf(event.getDate()));
@@ -73,10 +71,9 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public void delete(String eventName) throws EventNotFoundException, DaoOperationException{
+    public void delete(String eventName) throws EventNotFoundException, DaoOperationException {
         String sql = "DELETE FROM events WHERE name = ?";
-        try (Connection conn = DataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
             int rows = stmt.executeUpdate();
@@ -95,8 +92,7 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public Optional<Event> findByName(String eventName) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
-        try (Connection conn = DataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -118,8 +114,7 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public boolean existsByName(String eventName) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
-        try (Connection conn = DataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -133,12 +128,10 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Map<String, Event> getAllEvents() throws DaoOperationException{
+    public Map<String, Event> getAllEvents() throws DaoOperationException {
         String sql = "SELECT * FROM events";
         Map<String, Event> events = new HashMap<>();
-        try (Connection conn = DataSource.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DataSource.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Event event = new Event(rs.getString("name"), rs.getString("place"), rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
