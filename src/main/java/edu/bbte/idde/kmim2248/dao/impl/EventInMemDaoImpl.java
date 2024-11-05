@@ -1,17 +1,18 @@
 package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
-import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventInMemDaoImpl implements EventDao {
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
-    private final Map<String, Event> eventMap = new HashMap<>();
+    private final Map<String, Event> eventMap = new ConcurrentHashMap<>() {
+    };
 
     @Override
     public void save(Event event) {
@@ -47,10 +48,11 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public boolean existsByName(String eventName) throws DaoOperationException {
+    public boolean existsByName(String eventName) {
         return eventMap.containsKey(eventName);
     }
 
+    @Override
     public Map<String, Event> getAllEvents() {
         logger.info("All events returned");
         return eventMap;

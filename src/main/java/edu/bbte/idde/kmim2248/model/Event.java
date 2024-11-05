@@ -41,7 +41,7 @@ public class Event {
         this.date = date;
     }
 
-    public Boolean getOnline() {
+    public Boolean isOnline() {
         return online;
     }
 

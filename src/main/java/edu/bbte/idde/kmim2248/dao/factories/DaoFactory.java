@@ -1,6 +1,7 @@
 package edu.bbte.idde.kmim2248.dao.factories;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
+import org.slf4j.ILoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +9,10 @@ import java.util.Properties;
 
 
 public abstract class DaoFactory {
-
-    public abstract EventDao getEventDAO();
-
     private static final String CONFIG_FILE = "/dao-config.properties";
     private static String daoType;
+
+    public abstract EventDao getEventDAO();
 
     static {
         try (InputStream input = DaoFactory.class.getResourceAsStream(CONFIG_FILE)) {
@@ -20,7 +20,7 @@ public abstract class DaoFactory {
             properties.load(input);
             daoType = properties.getProperty("daoType", "jdbc"); // Default to "jdbc" if not specified
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load DAO configuration", e);
+            e.printStackTrace();
         }
     }
 

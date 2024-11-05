@@ -10,16 +10,14 @@ import org.slf4j.LoggerFactory;
 
 
 import java.sql.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class EventJdbcDaoImpl implements EventDao {
 
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
-    DataSource dataSource = new DataSource();
-
     public EventJdbcDaoImpl() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -35,7 +33,7 @@ public class EventJdbcDaoImpl implements EventDao {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
-            stmt.setBoolean(4, event.getOnline());
+            stmt.setBoolean(4, event.isOnline());
             stmt.setInt(5, event.getDuration());
             stmt.executeUpdate();
             logger.info("Event saved: {}", event);
@@ -54,7 +52,7 @@ public class EventJdbcDaoImpl implements EventDao {
 
             stmt.setString(1, event.getPlace());
             stmt.setDate(2, Date.valueOf(event.getDate()));
-            stmt.setBoolean(3, event.getOnline());
+            stmt.setBoolean(3, event.isOnline());
             stmt.setInt(4, event.getDuration());
             stmt.setString(5, event.getName());
             int rows = stmt.executeUpdate();
@@ -97,7 +95,8 @@ public class EventJdbcDaoImpl implements EventDao {
             stmt.setString(1, eventName);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Event event = new Event(rs.getString("name"), rs.getString("place"), rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
+                    Event event = new Event(rs.getString("name"), rs.getString("place"),
+                            rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     logger.info("Event found: {}", event);
                     return Optional.of(event);
                 } else {
@@ -130,11 +129,13 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public Map<String, Event> getAllEvents() throws DaoOperationException {
         String sql = "SELECT * FROM events";
-        Map<String, Event> events = new HashMap<>();
-        try (Connection conn = DataSource.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        Map<String, Event> events = new ConcurrentHashMap<>();
+        try (Connection conn = DataSource.getConnection(); Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Event event = new Event(rs.getString("name"), rs.getString("place"), rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
+                Event event = new Event(rs.getString("name"), rs.getString("place"),
+                        rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                 logger.info("Event found: {}", event);
                 events.put(event.getName(), event);
             }

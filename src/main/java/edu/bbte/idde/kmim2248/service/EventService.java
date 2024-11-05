@@ -12,7 +12,7 @@ import java.util.Map;
 public class EventService {
     private final EventDao eventDao;
 
-    public EventService(String dbType) {
+    public EventService() {
         DaoFactory daoFactory = DaoFactory.getDAOFactory();
         this.eventDao = daoFactory.getEventDAO();
     }
