@@ -194,8 +194,8 @@ public class EventUI {
 
     private void update(JTextField nameField, JTextField placeField, JTextField dateField,
                         JCheckBox onlineCheckBox, JTextField durationField, JFrame frame) {
-        if (nameField.getText().isEmpty() || placeField.getText().isEmpty() ||
-                dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
+        if (nameField.getText().isEmpty() || placeField.getText().isEmpty()
+                || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "All fields must be filled!");
             return;
         }
