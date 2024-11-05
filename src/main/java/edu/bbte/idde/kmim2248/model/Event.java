@@ -9,6 +9,14 @@ public class Event {
     private Boolean online;
     private int duration;
 
+    public Event(String name, String place, LocalDate date, Boolean online, int duration) {
+        this.name = name;
+        this.place = place;
+        this.date = date;
+        this.online = online;
+        this.duration = duration;
+    }
+
     public String getName() {
         return name;
     }

@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class JdbcDaoImpl implements EventDao {
+public class EventJdbcDaoImpl implements EventDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
     DataSource dataSource = new DataSource();
 
-    public JdbcDaoImpl() {
+    public EventJdbcDaoImpl() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -101,12 +101,7 @@ public class JdbcDaoImpl implements EventDao {
             stmt.setString(1, eventName);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Event event = new Event();
-                    event.setName(rs.getString("name"));
-                    event.setPlace(rs.getString("place"));
-                    event.setDate(rs.getDate("date").toLocalDate());
-                    event.setOnline(rs.getBoolean("online"));
-                    event.setDuration(rs.getInt("duration"));
+                    Event event = new Event(rs.getString("name"), rs.getString("place"), rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     logger.info("Event found: {}", event);
                     return Optional.of(event);
                 } else {
@@ -121,6 +116,23 @@ public class JdbcDaoImpl implements EventDao {
     }
 
     @Override
+    public boolean existsByName(String eventName) throws DaoOperationException {
+        String sql = "SELECT * FROM events WHERE name = ?";
+        try (Connection conn = DataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, eventName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error checking event existence", e);
+            throw new DaoOperationException("Error checking event existence", e);
+        }
+    }
+
+    @Override
     public Map<String, Event> getAllEvents() throws DaoOperationException{
         String sql = "SELECT * FROM events";
         Map<String, Event> events = new HashMap<>();
@@ -129,12 +141,7 @@ public class JdbcDaoImpl implements EventDao {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Event event = new Event();
-                event.setName(rs.getString("name"));
-                event.setPlace(rs.getString("place"));
-                event.setDate(rs.getDate("date").toLocalDate());
-                event.setOnline(rs.getBoolean("online"));
-                event.setDuration(rs.getInt("duration"));
+                Event event = new Event(rs.getString("name"), rs.getString("place"), rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                 logger.info("Event found: {}", event);
                 events.put(event.getName(), event);
             }

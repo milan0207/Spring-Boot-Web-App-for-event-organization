@@ -13,18 +13,15 @@ public class EventService {
     private final EventDao eventDao;
 
     public EventService(String dbType) {
-        DaoFactory daoFactory = DaoFactory.getDAOFactory(dbType);
+        DaoFactory daoFactory = DaoFactory.getDAOFactory();
         this.eventDao = daoFactory.getEventDAO();
     }
 
     public void createEvent(Event event) throws DaoOperationException, EventAlreadyExistsException {
-        try {
-            if(eventDao.findByName(event.getName()).isPresent()){
-                throw new EventAlreadyExistsException("Event with name " + event.getName() + " already exists.");
-            }
-        } catch (EventNotFoundException e) {
-            eventDao.save(event);
-        }
+       if(eventDao.existsByName(event.getName())) {
+           throw new EventAlreadyExistsException("Event with name " + event.getName() + " already exists.");
+       }
+         eventDao.save(event);
     }
 
     public void updateEvent(Event event) throws EventNotFoundException, DaoOperationException{

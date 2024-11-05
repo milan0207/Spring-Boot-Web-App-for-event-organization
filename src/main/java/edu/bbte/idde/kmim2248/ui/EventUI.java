@@ -88,9 +88,7 @@ public class EventUI {
             boolean online = onlineCheckBox.isSelected();
             int duration = Integer.parseInt(durationField.getText());
 
-            Event event = new Event();
-            event.setName(name);
-            event.setPlace(place);
+
             LocalDate date = null;
             try {
                 date = LocalDate.parse(stringDate);
@@ -99,9 +97,7 @@ public class EventUI {
                 ex.printStackTrace();
             }
 
-            event.setDate(date);
-            event.setOnline(online);
-            event.setDuration(duration);
+            Event event = new Event(name, place, date, online, duration);
 
             nameField.setText("");
             placeField.setText("");
@@ -115,11 +111,12 @@ public class EventUI {
             } catch (DaoOperationException ex) {
                 JOptionPane.showMessageDialog(frame, "Error saving event");
                 ex.printStackTrace();
+                return;
             }catch (EventAlreadyExistsException ex) {
                 JOptionPane.showMessageDialog(frame, "Event already exists");
                 ex.printStackTrace();
+                return;
             }
-
             try {
                 refreshList();
             } catch (DaoOperationException ex) {
@@ -166,9 +163,8 @@ public class EventUI {
             boolean online = onlineCheckBox.isSelected();
             int duration = Integer.parseInt(durationField.getText());
 
-            Event event = new Event();
-            event.setName(name);
-            event.setPlace(place);
+
+
 
             LocalDate date = null;
             try {
@@ -177,9 +173,8 @@ public class EventUI {
                 JOptionPane.showMessageDialog(frame, "Date format not valid");
                 ex.printStackTrace();
             }
-            event.setDate(date);
-            event.setOnline(online);
-            event.setDuration(duration);
+
+            Event event = new Event(name, place, date, online, duration);
 
             nameField.setText("");
             placeField.setText("");
