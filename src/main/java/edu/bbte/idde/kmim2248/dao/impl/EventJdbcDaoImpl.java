@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventJdbcDaoImpl implements EventDao {
 
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
+
     public EventJdbcDaoImpl() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

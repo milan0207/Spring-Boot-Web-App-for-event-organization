@@ -11,8 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventInMemDaoImpl implements EventDao {
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
-    private final Map<String, Event> eventMap = new ConcurrentHashMap<>() {
-    };
+    private final Map<String, Event> eventMap = new ConcurrentHashMap<>();
 
     @Override
     public void save(Event event) {
