@@ -17,6 +17,7 @@ public class Event {
         this.online = online;
         this.duration = duration;
     }
+
     public Event(int id, String name, String place, LocalDate date, Boolean online, int duration) {
         this.id = id;
         this.name = name;
