@@ -77,11 +77,14 @@ public class EventUI {
 
         frame.add(panel, BorderLayout.CENTER);
 
-        saveButton.addActionListener(e -> save(frame, nameField, placeField, dateField, onlineCheckBox, durationField));
+        saveButton.addActionListener(e -> save(frame, nameField, placeField, dateField, onlineCheckBox,
+                durationField));
 
-        findButton.addActionListener(e -> find(findField, frame, nameField, placeField, dateField, onlineCheckBox, durationField));
+        findButton.addActionListener(e -> find(findField, frame, nameField, placeField, dateField, onlineCheckBox,
+                durationField));
 
-        updateButton.addActionListener(e -> update(nameField, placeField, dateField, onlineCheckBox, durationField, frame));
+        updateButton.addActionListener(e -> update(nameField, placeField, dateField, onlineCheckBox, durationField,
+                frame));
 
         deleteButton.addActionListener(e -> delete(nameField, frame));
 
@@ -91,7 +94,8 @@ public class EventUI {
         frame.setVisible(true);
     }
 
-    private void save(JFrame frame, JTextField nameField, JTextField placeField, JTextField dateField, JCheckBox onlineCheckBox, JTextField durationField) {
+    private void save(JFrame frame, JTextField nameField, JTextField placeField, JTextField dateField, JCheckBox
+            onlineCheckBox, JTextField durationField) {
         if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || durationField.getText().isEmpty()) {
 
             JOptionPane.showMessageDialog(frame, "Field must be filled!");
@@ -173,7 +177,8 @@ public class EventUI {
         }
     }
 
-    private void find(JTextField findField, JFrame frame, JTextField nameField, JTextField placeField, JTextField dateField, JCheckBox onlineCheckBox, JTextField durationField) {
+    private void find(JTextField findField, JFrame frame, JTextField nameField, JTextField placeField, JTextField
+            dateField, JCheckBox onlineCheckBox, JTextField durationField) {
         if (findField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "Field must be filled!");
             return;
@@ -198,8 +203,10 @@ public class EventUI {
         }
     }
 
-    private void update(JTextField nameField, JTextField placeField, JTextField dateField, JCheckBox onlineCheckBox, JTextField durationField, JFrame frame) {
-        if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() || durationField.getText().isEmpty()) {
+    private void update(JTextField nameField, JTextField placeField, JTextField dateField, JCheckBox onlineCheckBox,
+                        JTextField durationField, JFrame frame) {
+        if (nameField.getText().isEmpty() || placeField.getText().isEmpty() || dateField.getText().isEmpty() ||
+                durationField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "All fields must be filled!");
             return;
         }
