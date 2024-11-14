@@ -113,11 +113,11 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Event findByName(String Name) throws EventNotFoundException, DaoOperationException {
+    public Event findByName(String name) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
         try (Connection conn = DataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, Name);
+            stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Event event = new Event(rs.getString("name"), rs.getString("place"),
@@ -126,7 +126,7 @@ public class EventJdbcDaoImpl implements EventDao {
                     logger.info("Event found: {}", event);
                     return event;
                 } else {
-                    throw new EventNotFoundException("Event not found: " + Name);
+                    throw new EventNotFoundException("Event not found: " + name);
                 }
             }
 
@@ -135,6 +135,7 @@ public class EventJdbcDaoImpl implements EventDao {
             throw new DaoOperationException("Error finding event", e);
         }
     }
+
     @Override
     public boolean existsByName(String eventName) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
@@ -172,6 +173,7 @@ public class EventJdbcDaoImpl implements EventDao {
         }
         return events;
     }
+
     @Override
     public boolean existsById(int id) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE id = ?";

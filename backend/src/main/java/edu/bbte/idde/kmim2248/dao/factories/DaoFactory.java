@@ -3,9 +3,13 @@ package edu.bbte.idde.kmim2248.dao.factories;
 import edu.bbte.idde.kmim2248.config.AppConfig;
 import edu.bbte.idde.kmim2248.config.ConfigLoader;
 import edu.bbte.idde.kmim2248.dao.EventDao;
+import edu.bbte.idde.kmim2248.dao.exception.ConfigurationException;
 import edu.bbte.idde.kmim2248.dao.impl.EventJdbcDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
 public abstract class DaoFactory {
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
 
@@ -17,7 +21,7 @@ public abstract class DaoFactory {
         AppConfig config = null;
         try {
             config = ConfigLoader.loadConfig();
-        } catch (Exception e) {
+        } catch (ConfigurationException | IOException e) {
             logger.error("Failed to load application configuration", e);
         }
         assert config != null;

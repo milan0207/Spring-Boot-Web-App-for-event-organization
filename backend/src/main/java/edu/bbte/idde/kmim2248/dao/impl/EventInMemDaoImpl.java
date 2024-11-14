@@ -12,7 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventInMemDaoImpl implements EventDao {
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
     private final Map<Integer, Event> eventMap = new ConcurrentHashMap<>();
-    int id = 0;
+    int id;
+
+    public EventInMemDaoImpl() {
+        id = 0;
+    }
 
     @Override
     public void save(Event event) {
@@ -48,7 +52,7 @@ public class EventInMemDaoImpl implements EventDao {
                 return event;
             }
         }
-        throw new EventNotFoundException("Event not found"+eventName);
+        throw new EventNotFoundException("Event not found" + eventName);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package edu.bbte.idde.kmim2248.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.bbte.idde.kmim2248.dao.exception.ConfigurationException;
+
+import java.io.IOException;
 import java.io.InputStream;
 
 public class ConfigLoader {
     private static AppConfig config;
 
-    public static AppConfig loadConfig() throws Exception {
+    public static synchronized AppConfig loadConfig() throws ConfigurationException, IOException {
         if (config != null) {
             return config;
         }
@@ -20,7 +23,7 @@ public class ConfigLoader {
         InputStream is = ConfigLoader.class.getResourceAsStream(configFile);
 
         if (is == null) {
-            throw new RuntimeException("Configuration file not found: " + configFile);
+            throw new ConfigurationException("Configuration file not found: " + configFile, null);
         }
 
         ObjectMapper mapper = new ObjectMapper();
