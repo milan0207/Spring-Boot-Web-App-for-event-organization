@@ -3,6 +3,7 @@ package edu.bbte.idde.kmim2248.model;
 import java.time.LocalDate;
 
 public class Event {
+    private int id;
     private String name;
     private String place;
     private LocalDate date;
@@ -15,6 +16,17 @@ public class Event {
         this.date = date;
         this.online = online;
         this.duration = duration;
+    }
+    public Event(int id, String name, String place, LocalDate date, Boolean online, int duration) {
+        this.id = id;
+        this.name = name;
+        this.place = place;
+        this.date = date;
+        this.online = online;
+        this.duration = duration;
+    }
+
+    public Event() {
     }
 
     public String getName() {
@@ -55,6 +67,14 @@ public class Event {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }

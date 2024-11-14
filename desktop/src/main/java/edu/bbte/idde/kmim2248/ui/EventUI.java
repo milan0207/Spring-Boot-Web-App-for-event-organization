@@ -157,8 +157,20 @@ public class EventUI {
             return;
         }
         String name = nameField.getText();
+        Event event= null;
         try {
-            eventService.deleteEvent(name);
+            event = eventService.findEventByName(name);
+        } catch (EventNotFoundException e) {
+            JOptionPane.showMessageDialog(frame, "Event not found.");
+            logger.warn("Event not found", e);
+            return;
+        } catch (DaoOperationException e) {
+            JOptionPane.showMessageDialog(frame, "Error finding event.");
+            logger.warn("Error finding event", e);
+            return;
+        }
+        try {
+            eventService.deleteEvent(event.getId());
             JOptionPane.showMessageDialog(frame, "Event deleted successfully!");
             refreshList();
         } catch (EventNotFoundException | DaoOperationException eventNotFoundException) {
@@ -235,14 +247,14 @@ public class EventUI {
     }
 
     private JScrollPane createScrollPane() throws DaoOperationException {
-        Map<String, Event> events = eventService.getAllEvents();
+        Map<Integer, Event> events = eventService.getAllEvents();
 
-        String[] columnNames = {"Name", "Place", "Date", "Online", "Duration"};
+        String[] columnNames = {"id","Name", "Place", "Date", "Online", "Duration"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         for (Event event : events.values()) {
             Object[] row =
-                    {event.getName(), event.getPlace(), event.getDate(), event.isOnline(), event.getDuration()};
+                    {event.getId(), event.getName(), event.getPlace(), event.getDate(), event.isOnline(), event.getDuration()};
             model.addRow(row);
         }
 
@@ -254,12 +266,12 @@ public class EventUI {
     }
 
     private void refreshList() throws DaoOperationException {
-        Map<String, Event> events = eventService.getAllEvents();
+        Map<Integer, Event> events = eventService.getAllEvents();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         for (Event event : events.values()) {
             Object[] row =
-                    {event.getName(), event.getPlace(), event.getDate(), event.isOnline(), event.getDuration()};
+                    {event.getId(), event.getName(), event.getPlace(), event.getDate(), event.isOnline(), event.getDuration()};
             model.addRow(row);
         }
     }

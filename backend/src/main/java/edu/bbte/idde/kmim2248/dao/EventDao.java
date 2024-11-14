@@ -12,11 +12,15 @@ public interface EventDao {
 
     void update(Event event) throws EventNotFoundException, DaoOperationException;
 
-    void delete(String eventName) throws EventNotFoundException, DaoOperationException;
+    void delete(int id) throws EventNotFoundException, DaoOperationException;
 
-    Optional<Event> findByName(String eventName) throws EventNotFoundException, DaoOperationException;
+    Event findByName(String eventName) throws EventNotFoundException, DaoOperationException;
 
     boolean existsByName(String eventName) throws DaoOperationException;
 
-    Map<String, Event> getAllEvents() throws DaoOperationException;
+    boolean existsById(int id) throws DaoOperationException;
+
+    Map<Integer, Event> getAllEvents() throws DaoOperationException;
+
+    Event findById(int id) throws EventNotFoundException, DaoOperationException;
 }

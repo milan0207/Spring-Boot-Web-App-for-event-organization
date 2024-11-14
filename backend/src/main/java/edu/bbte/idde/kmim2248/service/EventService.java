@@ -3,9 +3,9 @@ package edu.bbte.idde.kmim2248.service;
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
+import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.dao.factories.DaoFactory;
 import edu.bbte.idde.kmim2248.model.Event;
-import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 
 import java.util.Map;
 
@@ -28,16 +28,24 @@ public class EventService {
         eventDao.update(event);
     }
 
-    public void deleteEvent(String eventName) throws EventNotFoundException, DaoOperationException {
-        eventDao.delete(eventName);
+    public void deleteEvent(int id) throws EventNotFoundException, DaoOperationException {
+        eventDao.delete(id);
     }
 
 
-    public Map<String, Event> getAllEvents() throws DaoOperationException {
+    public Map<Integer, Event> getAllEvents() throws DaoOperationException {
         return eventDao.getAllEvents();
     }
 
     public Event findEventByName(String name) throws EventNotFoundException, DaoOperationException {
-        return eventDao.findByName(name).orElse(null);
+        return eventDao.findByName(name);
+    }
+
+    public Event findEventById(int id) throws EventNotFoundException, DaoOperationException {
+        return eventDao.findById(id);
+    }
+
+    public boolean existsEventById(int id) throws DaoOperationException {
+        return eventDao.existsById(id);
     }
 }
