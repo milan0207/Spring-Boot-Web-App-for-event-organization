@@ -1,14 +1,12 @@
 package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
-import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EventInMemDaoImpl implements EventDao {
@@ -26,8 +24,8 @@ public class EventInMemDaoImpl implements EventDao {
 
     @Override
     public void update(Event event) throws EventNotFoundException {
-        if (!eventMap.containsKey(event.getName())) {
-            throw new EventNotFoundException("Event with name " + event.getName() + " not found.");
+        if (!eventMap.containsKey(event.getId())) {
+            throw new EventNotFoundException("Event with ID: " + event.getId() + " not found.");
         }
         eventMap.put(event.getId(), event);
         logger.info("Event updated: {}", event);
@@ -72,7 +70,7 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Event findById(int id) throws EventNotFoundException, DaoOperationException {
+    public Event findById(int id) throws EventNotFoundException {
         if (!eventMap.containsKey(id)) {
             throw new EventNotFoundException("Event with ID: " + id + " not found.");
         }

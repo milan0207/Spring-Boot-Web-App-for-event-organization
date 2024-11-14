@@ -5,7 +5,6 @@ import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
 
 import java.util.Map;
-import java.util.Optional;
 
 public interface EventDao {
     void save(Event event) throws DaoOperationException;

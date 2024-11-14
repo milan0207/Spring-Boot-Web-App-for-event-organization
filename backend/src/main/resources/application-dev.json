@@ -1,0 +1,7 @@
+{
+  "profile": "dev",
+  "database": {
+    "type": "inmemory",
+    "maxPoolSize": 10
+  }
+}

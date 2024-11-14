@@ -24,10 +24,9 @@ public class EventServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
 
     private EventService eventService;
-    private ObjectMapper mapper = getObjectMapper();
+    private final ObjectMapper mapper = getObjectMapper();
 
 
-    // Servlet inicializálása
     @Override
     public void init() {
         this.eventService = new EventService();
@@ -36,7 +35,6 @@ public class EventServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
-        // GET hívásra visszatéríti az összes tárolt entitást, tömb formájában, ha van ID csak azt
         if (request.getParameter("id") != null) {
 
             int id = Integer.parseInt(request.getParameter("id"));
@@ -63,9 +61,7 @@ public class EventServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-
-        Event event = null;
-            event = mapper.readValue(request.getInputStream(), Event.class);
+        Event event = mapper.readValue(request.getInputStream(), Event.class);
 
         if (event.getName() == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
