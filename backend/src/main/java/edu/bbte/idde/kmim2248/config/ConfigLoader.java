@@ -20,7 +20,7 @@ public class ConfigLoader {
         }
 
         String configFile = String.format("/application-%s.json", profile);
-       try(InputStream is = ConfigLoader.class.getResourceAsStream(configFile)) {
+        try (InputStream is = ConfigLoader.class.getResourceAsStream(configFile)) {
             if (is == null) {
                 throw new ConfigurationException("Configuration file not found: " + configFile, null);
             }
