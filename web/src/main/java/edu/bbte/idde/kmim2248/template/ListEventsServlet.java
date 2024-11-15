@@ -1,8 +1,6 @@
 package edu.bbte.idde.kmim2248.template;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.bbte.idde.kmim2248.model.Event;
 import jakarta.servlet.annotation.WebServlet;
