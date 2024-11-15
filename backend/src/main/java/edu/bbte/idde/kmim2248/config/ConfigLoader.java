@@ -20,15 +20,15 @@ public class ConfigLoader {
         }
 
         String configFile = String.format("/application-%s.json", profile);
-        InputStream is = ConfigLoader.class.getResourceAsStream(configFile);
+       try(InputStream is = ConfigLoader.class.getResourceAsStream(configFile)) {
+            if (is == null) {
+                throw new ConfigurationException("Configuration file not found: " + configFile, null);
+            }
 
-        if (is == null) {
-            throw new ConfigurationException("Configuration file not found: " + configFile, null);
+            ObjectMapper mapper = new ObjectMapper();
+            config = mapper.readValue(is, AppConfig.class);
+            return config;
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        config = mapper.readValue(is, AppConfig.class);
-        return config;
     }
 }
 

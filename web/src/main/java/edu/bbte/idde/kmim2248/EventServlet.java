@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventAlreadyExistsException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.dao.impl.EventJdbcDaoImpl;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.service.EventServiceFactory;
@@ -59,9 +58,15 @@ public class EventServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
-        Event event = mapper.readValue(request.getInputStream(), Event.class);
+        Event event;
+        try {
+            event = mapper.readValue(request.getInputStream(), Event.class);
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
         if (event.getName() == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -83,7 +88,15 @@ public class EventServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id;
+        try {
+            id = Integer.parseInt(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            logger.warn("ID is not a number", e);
+            return;
+        }
+
         try {
             eventService.deleteEvent(id);
         } catch (EventNotFoundException e) {

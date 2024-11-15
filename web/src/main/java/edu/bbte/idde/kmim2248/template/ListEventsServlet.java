@@ -1,7 +1,6 @@
 package edu.bbte.idde.kmim2248.template;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Map;
-import static edu.bbte.idde.kmim2248.config.JacksonConfig.getObjectMapper;
 import static edu.bbte.idde.kmim2248.service.EventServiceFactory.getEventService;
 
 @WebServlet("/events-html")
@@ -25,7 +23,7 @@ public class ListEventsServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(ListEventsServlet.class);
 
-    EventService eventService;
+    transient EventService eventService;
 
     @Override
     public void init() {
