@@ -19,7 +19,7 @@ import java.util.Map;
 import static edu.bbte.idde.kmim2248.service.EventServiceFactory.getEventService;
 
 public class EventUI {
-    private final EventService eventService=getEventService();
+    private final EventService eventService = getEventService();
     private JTable table;
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
 
