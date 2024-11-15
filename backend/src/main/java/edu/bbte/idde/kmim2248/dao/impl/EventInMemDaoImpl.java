@@ -2,7 +2,6 @@ package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.dao.factories.InMemDaoFactory;
 import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
