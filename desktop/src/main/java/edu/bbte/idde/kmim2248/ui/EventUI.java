@@ -23,10 +23,6 @@ public class EventUI {
     private JTable table;
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
 
-    public EventUI() {
-
-    }
-
     public void createAndShowGUI() throws DaoOperationException {
 
         JFrame frame = new JFrame("Event Management");
