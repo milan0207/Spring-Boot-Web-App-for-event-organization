@@ -17,8 +17,14 @@ public class AuthFilter implements Filter {
     public void doFilter(jakarta.servlet.ServletRequest req, jakarta.servlet.ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
+        HttpServletRequest request;
+        HttpServletResponse response;
+        if (req instanceof HttpServletRequest && res instanceof HttpServletResponse) {
+            request = (HttpServletRequest) req;
+            response = (HttpServletResponse) res;
+        } else {
+            throw new ServletException("Non-HTTP request or response");
+        }
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("loggedIn") == null) {

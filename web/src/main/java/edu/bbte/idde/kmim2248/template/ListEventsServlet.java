@@ -1,6 +1,8 @@
 package edu.bbte.idde.kmim2248.template;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.bbte.idde.kmim2248.model.Event;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,7 +37,7 @@ public class ListEventsServlet extends HttpServlet {
             events = mapper.readValue(new URL("http://localhost:8080/event/events").openStream(),
                     new TypeReference<>() {
                     });
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error while fetching events", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch events");
             return;

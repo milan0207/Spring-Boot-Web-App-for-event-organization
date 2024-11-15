@@ -23,7 +23,7 @@ public class EventServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
 
-    private EventService eventService;
+    private transient EventService eventService;
     private final ObjectMapper mapper = getObjectMapper();
 
 
