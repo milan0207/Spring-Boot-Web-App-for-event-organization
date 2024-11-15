@@ -1,6 +1,5 @@
 package edu.bbte.idde.kmim2248.config;
 
-
 public class DatabaseConfig {
     private String type;
     private String url;

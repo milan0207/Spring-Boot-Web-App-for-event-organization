@@ -2,7 +2,9 @@ package edu.bbte.idde.kmim2248.template;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.model.Event;
+import edu.bbte.idde.kmim2248.service.EventService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,32 +16,39 @@ import com.github.jknack.handlebars.Template;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.net.URL;
 import java.util.Map;
-
 import static edu.bbte.idde.kmim2248.config.JacksonConfig.getObjectMapper;
+import static edu.bbte.idde.kmim2248.service.EventServiceFactory.getEventService;
 
 @WebServlet("/events-html")
 public class ListEventsServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(ListEventsServlet.class);
 
-    private final ObjectMapper mapper = getObjectMapper();
+    EventService eventService;
+
+    @Override
+    public void init() {
+        this.eventService = getEventService();
+    }
+
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
 
         Map<Integer, Event> events;
+
         try {
-            events = mapper.readValue(new URL("http://localhost:8080/event/events").openStream(),
-                    new TypeReference<>() {
-                    });
-        } catch (IOException e) {
-            logger.error("Error while fetching events", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch events");
+            events = eventService.getAllEvents();
+        } catch (DaoOperationException e) {
+            logger.error("Error while getting events", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while getting events");
             return;
+
         }
+        logger.info("Events: {}", events);
 
         Template template;
         try {

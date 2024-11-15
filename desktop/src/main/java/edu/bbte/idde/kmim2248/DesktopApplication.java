@@ -6,8 +6,7 @@ import edu.bbte.idde.kmim2248.ui.EventUI;
 
 public class DesktopApplication {
     public static void main(String[] args) throws DaoOperationException {
-        EventService eventService = new EventService();
-        EventUI eventUI = new EventUI(eventService);
+        EventUI eventUI = new EventUI();
 
         eventUI.createAndShowGUI();
     }

@@ -16,10 +16,8 @@ war {
 dependencies {
     // https://mvnrepository.com/artifact/org.freemarker/freemarker
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.33'
-
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider
     implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.18.1'
-
     implementation project(':backend')
     // https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
     compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
@@ -27,7 +25,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.18.1'
     // https://mvnrepository.com/artifact/com.github.jknack/handlebars
     implementation group: 'com.github.jknack', name: 'handlebars', version: '4.4.0'
-
 }
 def deploymentName = 'event'
 def tomcatHome = System.getenv('CATALINA_HOME')

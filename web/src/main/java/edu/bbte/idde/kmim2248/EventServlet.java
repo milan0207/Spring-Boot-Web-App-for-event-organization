@@ -7,6 +7,7 @@ import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.dao.impl.EventJdbcDaoImpl;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.EventService;
+import edu.bbte.idde.kmim2248.service.EventServiceFactory;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,15 +22,14 @@ import static edu.bbte.idde.kmim2248.config.JacksonConfig.getObjectMapper;
 @WebServlet("/events")
 public class EventServlet extends HttpServlet {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventJdbcDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventServlet.class);
 
     private transient EventService eventService;
     private final ObjectMapper mapper = getObjectMapper();
 
-
     @Override
     public void init() {
-        this.eventService = new EventService();
+        this.eventService = EventServiceFactory.getEventService();
     }
 
     @Override
