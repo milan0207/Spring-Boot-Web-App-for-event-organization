@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class JacksonConfig {
     private static volatile ObjectMapper objectMapper;
 
-    public static ObjectMapper getObjectMapper() {
-        if (objectMapper != null) {
-            return objectMapper;
+    public static synchronized ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         }
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;
     }
 }
+
