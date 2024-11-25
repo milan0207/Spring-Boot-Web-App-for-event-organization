@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class JacksonConfig {
-    private static ObjectMapper objectMapper;
+    private static volatile ObjectMapper objectMapper;
 
     public static ObjectMapper getObjectMapper() {
         if (objectMapper != null) {
