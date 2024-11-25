@@ -6,7 +6,7 @@ import edu.bbte.idde.kmim2248.dao.impl.EventJdbcDaoImpl;
 
 public class JdbcDaoFactory extends DaoFactory {
 
-    private static EventJdbcDaoImpl eventJdbcDaoImpl;
+    private static volatile EventJdbcDaoImpl eventJdbcDaoImpl;
 
     @Override
     public EventDao getEventDAO() {

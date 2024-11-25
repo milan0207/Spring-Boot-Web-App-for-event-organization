@@ -5,7 +5,7 @@ import edu.bbte.idde.kmim2248.dao.impl.EventInMemDaoImpl;
 
 public class InMemDaoFactory extends DaoFactory {
 
-    private static EventInMemDaoImpl eventInMemDaoImpl;
+    private static volatile EventInMemDaoImpl eventInMemDaoImpl;
 
     @Override
     public EventDao getEventDAO() {
