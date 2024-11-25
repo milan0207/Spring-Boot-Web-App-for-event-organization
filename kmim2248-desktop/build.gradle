@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(':backend')
+    implementation project(':kmim2248-backend')
 
 }
 

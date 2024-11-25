@@ -5,8 +5,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class JacksonConfig {
+    private static ObjectMapper objectMapper;
+
     public static ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        if (objectMapper != null) {
+            return objectMapper;
+        }
+        objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;

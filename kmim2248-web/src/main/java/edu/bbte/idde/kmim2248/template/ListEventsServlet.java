@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Map;
+
 import static edu.bbte.idde.kmim2248.service.EventServiceFactory.getEventService;
+
 
 @WebServlet("/events-html")
 public class ListEventsServlet extends HttpServlet {
@@ -29,7 +31,6 @@ public class ListEventsServlet extends HttpServlet {
     public void init() {
         this.eventService = getEventService();
     }
-
 
 
     @Override

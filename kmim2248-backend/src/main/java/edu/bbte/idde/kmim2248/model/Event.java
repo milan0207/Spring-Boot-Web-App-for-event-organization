@@ -2,8 +2,7 @@ package edu.bbte.idde.kmim2248.model;
 
 import java.time.LocalDate;
 
-public class Event {
-    private int id;
+public class Event extends BaseEntity {
     private String name;
     private String place;
     private LocalDate date;
@@ -11,6 +10,7 @@ public class Event {
     private int duration;
 
     public Event(String name, String place, LocalDate date, Boolean online, int duration) {
+        super();
         this.name = name;
         this.place = place;
         this.date = date;
@@ -19,7 +19,7 @@ public class Event {
     }
 
     public Event(int id, String name, String place, LocalDate date, Boolean online, int duration) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.place = place;
         this.date = date;
@@ -28,6 +28,7 @@ public class Event {
     }
 
     public Event() {
+        super();
     }
 
     public String getName() {
@@ -70,12 +71,5 @@ public class Event {
         this.duration = duration;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
 }

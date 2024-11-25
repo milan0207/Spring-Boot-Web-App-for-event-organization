@@ -38,27 +38,37 @@ public class EventServlet extends HttpServlet {
 
             int id = Integer.parseInt(request.getParameter("id"));
             try {
-                response.getWriter().write(mapper.writeValueAsString(eventService.findEventById(id)));
+                Object event = eventService.findEventById(id);
+                mapper.writeValue(response.getOutputStream(), event);
             } catch (EventNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                String jsonError = "{\"error\": \"Event not found\"}";
+                response.getWriter().write(jsonError);
                 logger.warn("Event not found", e);
+
             } catch (DaoOperationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                String jsonError = "{\"error\": \"Error while getting event\"}";
+                response.getWriter().write(jsonError);
                 logger.error("Error while getting event", e);
             }
             return;
         }
         try {
-            response.getWriter().write(mapper.writeValueAsString(eventService.getAllEvents()));
+            Object events = eventService.getAllEvents();
+            mapper.writeValue(response.getOutputStream(), events);
         } catch (DaoOperationException e) {
             logger.error("Error while getting events", e);
+            String jsonError = "{\"error\": \"Error while getting events\"}";
+            response.getWriter().write(jsonError);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
     }
 
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Event event;
         try {
@@ -76,10 +86,14 @@ public class EventServlet extends HttpServlet {
             eventService.createEvent(event);
         } catch (DaoOperationException e) {
             logger.error("Error while creating event", e);
+            String jsonError = "{\"error\": \"Error while creating event\"}";
+            response.getWriter().write(jsonError);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         } catch (EventAlreadyExistsException e) {
             logger.error("Event already exists", e);
+            String jsonError = "{\"error\": \"Event already exists\"}";
+            response.getWriter().write(jsonError);
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             return;
         }
@@ -87,12 +101,14 @@ public class EventServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id;
         try {
             id = Integer.parseInt(request.getParameter("id"));
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            String jsonError = "{\"error\": \"ID is not a number\"}";
+            response.getWriter().write(jsonError);
             logger.warn("ID is not a number", e);
             return;
         }
@@ -102,9 +118,13 @@ public class EventServlet extends HttpServlet {
         } catch (EventNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             logger.warn("Event not found in servlet", e);
+            String jsonError = "{\"error\": \"Event not found in servlet\"}";
+            response.getWriter().write(jsonError);
             return;
         } catch (DaoOperationException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            String jsonError = "{\"error\": \"Error while deleting event\"}";
+            response.getWriter().write(jsonError);
             logger.error("Error while deleting event", e);
             return;
         }
@@ -121,10 +141,14 @@ public class EventServlet extends HttpServlet {
         } catch (EventNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             logger.warn("Event not found in servlet", e);
+            String jsonError = "{\"error\": \"Event not found in servlet\"}";
+            response.getWriter().write(jsonError);
             return;
         } catch (DaoOperationException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Error while updating event", e);
+            String jsonError = "{\"error\": \"Error while updating event\"}";
+            response.getWriter().write(jsonError);
             return;
         }
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);

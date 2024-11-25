@@ -18,7 +18,7 @@ dependencies {
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.33'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider
     implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.18.1'
-    implementation project(':backend')
+    implementation project(':kmim2248-backend')
     // https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
     compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
@@ -33,7 +33,6 @@ logger.quiet("Tomcat home detected as '${tomcatHome}'")
 // ezzel a taszkkal telepítjük ki a wart a Tomcatre
 tasks.register('deploy', Copy) {
     dependsOn 'war'
-
     // futás előtt megnézzük, hogy a Tomcat home-ja helyesen be van-e állítva
     doFirst {
         if (!tomcatHome) {
