@@ -42,15 +42,15 @@ public class EventServlet extends HttpServlet {
                 mapper.writeValue(response.getOutputStream(), event);
             } catch (EventNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                String jsonError = "{\"error\": \"Event not found\"}";
-                response.getWriter().write(jsonError);
-                logger.warn("Event not found", e);
+                ErrorMessage errorMessage = new ErrorMessage("Event not found");
+                logger.warn(errorMessage.toString());
+                mapper.writeValue(response.getOutputStream(), errorMessage);
 
             } catch (DaoOperationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                String jsonError = "{\"error\": \"Error while getting event\"}";
-                response.getWriter().write(jsonError);
-                logger.error("Error while getting event", e);
+                ErrorMessage errorMessage = new ErrorMessage("Error while getting event");
+                mapper.writeValue(response.getOutputStream(), errorMessage);
+                logger.error(errorMessage.toString(), e);
             }
             return;
         }
@@ -58,9 +58,9 @@ public class EventServlet extends HttpServlet {
             Object events = eventService.getAllEvents();
             mapper.writeValue(response.getOutputStream(), events);
         } catch (DaoOperationException e) {
-            logger.error("Error while getting events", e);
-            String jsonError = "{\"error\": \"Error while getting events\"}";
-            response.getWriter().write(jsonError);
+            ErrorMessage errorMessage = new ErrorMessage("Error while getting events");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.error(errorMessage.toString(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
@@ -85,15 +85,15 @@ public class EventServlet extends HttpServlet {
         try {
             eventService.createEvent(event);
         } catch (DaoOperationException e) {
-            logger.error("Error while creating event", e);
-            String jsonError = "{\"error\": \"Error while creating event\"}";
-            response.getWriter().write(jsonError);
+            ErrorMessage errorMessage = new ErrorMessage("Error while creating event");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.error(errorMessage.toString(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         } catch (EventAlreadyExistsException e) {
-            logger.error("Event already exists", e);
-            String jsonError = "{\"error\": \"Event already exists\"}";
-            response.getWriter().write(jsonError);
+            ErrorMessage errorMessage = new ErrorMessage("Event already exists");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.warn(errorMessage.toString(), e);
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             return;
         }
@@ -107,9 +107,9 @@ public class EventServlet extends HttpServlet {
             id = Integer.parseInt(request.getParameter("id"));
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            String jsonError = "{\"error\": \"ID is not a number\"}";
-            response.getWriter().write(jsonError);
-            logger.warn("ID is not a number", e);
+            ErrorMessage errorMessage = new ErrorMessage("Invalid id");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.warn(errorMessage.toString(), e);
             return;
         }
 
@@ -117,15 +117,15 @@ public class EventServlet extends HttpServlet {
             eventService.deleteEvent(id);
         } catch (EventNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            logger.warn("Event not found in servlet", e);
-            String jsonError = "{\"error\": \"Event not found in servlet\"}";
-            response.getWriter().write(jsonError);
+            ErrorMessage errorMessage = new ErrorMessage("Event not found");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.warn(errorMessage.toString(), e);
             return;
         } catch (DaoOperationException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            String jsonError = "{\"error\": \"Error while deleting event\"}";
-            response.getWriter().write(jsonError);
-            logger.error("Error while deleting event", e);
+            ErrorMessage errorMessage = new ErrorMessage("Error while deleting event");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.error(errorMessage.toString(), e);
             return;
         }
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -139,19 +139,18 @@ public class EventServlet extends HttpServlet {
         try {
             eventService.updateEvent(event);
         } catch (EventNotFoundException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Event not found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            logger.warn("Event not found in servlet", e);
-            String jsonError = "{\"error\": \"Event not found in servlet\"}";
-            response.getWriter().write(jsonError);
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.warn(errorMessage.toString(), e);
             return;
         } catch (DaoOperationException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            logger.error("Error while updating event", e);
-            String jsonError = "{\"error\": \"Error while updating event\"}";
-            response.getWriter().write(jsonError);
+            ErrorMessage errorMessage = new ErrorMessage("Error while updating event");
+            mapper.writeValue(response.getOutputStream(), errorMessage);
+            logger.error(errorMessage.toString(), e);
             return;
         }
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-
     }
 }
