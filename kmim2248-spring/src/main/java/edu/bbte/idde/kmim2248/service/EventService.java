@@ -1,4 +1,4 @@
-package edu.bbte.idde.kmim2248;
+package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;

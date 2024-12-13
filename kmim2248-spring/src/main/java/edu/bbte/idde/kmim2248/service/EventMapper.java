@@ -1,4 +1,4 @@
-package edu.bbte.idde.kmim2248;
+package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.model.EventDTO;
 import edu.bbte.idde.kmim2248.model.Events;

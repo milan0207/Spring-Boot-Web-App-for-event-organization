@@ -1,4 +1,4 @@
-package edu.bbte.idde.kmim2248;
+package edu.bbte.idde.kmim2248.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
