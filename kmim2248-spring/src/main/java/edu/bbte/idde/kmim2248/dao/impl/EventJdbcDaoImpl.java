@@ -40,7 +40,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public void save(Events event) throws DaoOperationException {
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
@@ -59,7 +60,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public void update(Events event) throws EventNotFoundException, DaoOperationException {
         String sql = "UPDATE events SET name = ?, place = ?, date = ?, online = ?, duration = ? WHERE id = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
@@ -83,7 +85,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public void delete(Long id) throws EventNotFoundException, DaoOperationException {
         String sql = "DELETE FROM events WHERE id = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
             int rows = stmt.executeUpdate();
@@ -103,7 +106,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public Events findById(Long id) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE id = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -127,7 +131,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public Events findByName(String name) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -151,7 +156,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public boolean existsByName(String eventName) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, eventName);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -189,7 +195,8 @@ public class EventJdbcDaoImpl implements EventDao {
     @Override
     public boolean existsById(Long id) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE id = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -203,10 +210,12 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
 
+    @Override
     public Collection<Events> findByNameContainingIgnoreCase(String name) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name LIKE ?";
         Collection<Events> events = new ArrayList<>();
-        try (Connection conn = dataSourceConfiguration.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSourceConfiguration.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name + "%");
             try (ResultSet rs = stmt.executeQuery()) {

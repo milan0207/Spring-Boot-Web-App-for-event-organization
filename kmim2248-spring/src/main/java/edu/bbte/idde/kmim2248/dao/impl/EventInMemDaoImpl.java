@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -89,7 +90,10 @@ public class EventInMemDaoImpl implements EventDao {
 
     @Override
     public Collection<Events> findByNameContainingIgnoreCase(String keyword) {
-        return eventMap.values().stream().filter(event -> event.getName().toLowerCase().startsWith(keyword.toLowerCase())).toList();
+        return eventMap.values()
+                .stream()
+                .filter(event -> event.getName().toLowerCase(Locale.ROOT)
+                        .startsWith(keyword.toLowerCase(Locale.ROOT))).toList();
     }
 
     @Override

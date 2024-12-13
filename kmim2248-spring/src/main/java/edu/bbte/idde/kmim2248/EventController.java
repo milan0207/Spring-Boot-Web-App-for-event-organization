@@ -23,7 +23,15 @@ public class EventController {
 
     // Get all entities
     @GetMapping
-    public ResponseEntity<?> getAllEntities() {
+    public ResponseEntity<?> getAllEntities(@RequestParam(required = false) String name) {
+        if (name != null && !name.isEmpty()) {
+            try {
+                return ResponseEntity.ok(eventService.searchEntities(name));
+            } catch (DaoOperationException e) {
+                Response response = new Response("Error occurred while searching events", 500);
+                return ResponseEntity.status(500).body(response);
+            }
+        }
         try {
             return ResponseEntity.ok(eventService.getAllEvents());
         } catch (DaoOperationException e) {
@@ -68,7 +76,8 @@ public class EventController {
 
     // Update event
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateEvent(@PathVariable Long id, @Valid @RequestBody EventDTO eventDTO, BindingResult result) {
+    public ResponseEntity<Object> updateEvent(@PathVariable Long id,
+                                              @Valid @RequestBody EventDTO eventDTO, BindingResult result) {
 
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors().stream()
@@ -105,14 +114,4 @@ public class EventController {
         return ResponseEntity.ok(response);
     }
 
-    // Search entities
-    @GetMapping("/search")
-    public ResponseEntity<?> searchEntities(@RequestParam String name) {
-        try {
-            return ResponseEntity.ok(eventService.searchEntities(name));
-        } catch (DaoOperationException e) {
-            Response response = new Response("Error occurred while searching events", 500);
-            return ResponseEntity.status(500).body(response);
-        }
-    }
 }

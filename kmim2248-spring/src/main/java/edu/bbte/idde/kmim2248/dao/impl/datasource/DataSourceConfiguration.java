@@ -27,19 +27,19 @@ public class DataSourceConfiguration {
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
 
-    private HikariDataSource dataSource;
+    private HikariDataSource hikariDataSource;
 
     @Bean
     public DataSource dataSource() {
-        if (dataSource == null) {
+        if (hikariDataSource == null) {
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(jdbcUrl);
             config.setUsername(username);
             config.setPassword(password);
             config.setDriverClassName(driverClassName);
-            dataSource = new HikariDataSource(config);
+            hikariDataSource = new HikariDataSource(config);
         }
-        return dataSource;
+        return hikariDataSource;
     }
 
     public Connection getConnection() throws SQLException {
