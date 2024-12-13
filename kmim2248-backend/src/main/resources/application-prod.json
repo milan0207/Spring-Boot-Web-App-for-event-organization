@@ -1,0 +1,10 @@
+{
+  "profile": "prod",
+  "database": {
+    "type": "jdbc",
+    "url": "jdbc:mysql://localhost:3306/eventdb",
+    "username": "root",
+    "password": "1234",
+    "maxPoolSize": 20
+  }
+}

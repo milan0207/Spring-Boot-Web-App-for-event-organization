@@ -1,1 +1,4 @@
-rootProject.name = 'abcd1234-idde'
+rootProject.name = 'kmim2248-idde'
+include 'kmim2248-backend'
+include 'kmim2248-web'
+include 'kmim2248-desktop'

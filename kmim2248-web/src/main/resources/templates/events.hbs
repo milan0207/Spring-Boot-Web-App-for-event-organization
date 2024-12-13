@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event List</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <h1>Event List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Place</th>
+                <th>Date</th>
+                <th>Online</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each events}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{name}}</td>
+                    <td>{{place}}</td>
+                    <td>{{date}}</td>
+                    <td>{{online}}</td>
+                    <td>{{duration}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <form method="get" action="logout">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClassName = 'edu.bbte.idde.kmim2248.DesktopApplication'
+}
+
+group = 'org.example'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':kmim2248-backend')
+
+}
+
+test {
+    useJUnitPlatform()
+}
