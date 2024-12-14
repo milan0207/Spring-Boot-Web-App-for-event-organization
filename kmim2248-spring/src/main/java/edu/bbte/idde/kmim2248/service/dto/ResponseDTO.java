@@ -1,11 +1,11 @@
-package edu.bbte.idde.kmim2248.controller;
+package edu.bbte.idde.kmim2248.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Response {
+public class ResponseDTO {
     private String message;
     private int status;
 }

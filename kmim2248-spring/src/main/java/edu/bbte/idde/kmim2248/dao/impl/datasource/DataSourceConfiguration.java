@@ -2,16 +2,15 @@ package edu.bbte.idde.kmim2248.dao.impl.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@Configuration
+@Repository
 @Profile("prod")
 public class DataSourceConfiguration {
 
@@ -29,21 +28,19 @@ public class DataSourceConfiguration {
 
     private HikariDataSource hikariDataSource;
 
-    @Bean
-    public DataSource dataSource() {
-        if (hikariDataSource == null) {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(jdbcUrl);
-            config.setUsername(username);
-            config.setPassword(password);
-            config.setDriverClassName(driverClassName);
-            hikariDataSource = new HikariDataSource(config);
-        }
-        return hikariDataSource;
+    @PostConstruct
+    public void dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(jdbcUrl);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName(driverClassName);
+        hikariDataSource = new HikariDataSource(config);
+
     }
 
     public Connection getConnection() throws SQLException {
-        return dataSource().getConnection();
+        return hikariDataSource.getConnection();
     }
 }
 

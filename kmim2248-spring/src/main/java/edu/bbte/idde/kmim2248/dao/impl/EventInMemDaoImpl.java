@@ -2,7 +2,7 @@ package edu.bbte.idde.kmim2248.dao.impl;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.model.Events;
+import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class EventInMemDaoImpl implements EventDao {
     private static final Logger logger = LoggerFactory.getLogger(EventInMemDaoImpl.class);
-    private final Map<Long, Events> eventMap = new ConcurrentHashMap<>();
+    private final Map<Long, Event> eventMap = new ConcurrentHashMap<>();
     Long id;
 
     public EventInMemDaoImpl() {
@@ -25,7 +25,7 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public void save(Events event) {
+    public void save(Event event) {
         event.setId(id);
         eventMap.put(id, event);
         id++;
@@ -33,7 +33,7 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public void update(Events event) throws EventNotFoundException {
+    public void update(Event event) throws EventNotFoundException {
         if (!eventMap.containsKey(event.getId())) {
             throw new EventNotFoundException("Events with ID: " + event.getId() + " not found.");
         }
@@ -51,8 +51,8 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Events findByName(String eventName) throws EventNotFoundException {
-        for (Events event : eventMap.values()) {
+    public Event findByName(String eventName) throws EventNotFoundException {
+        for (Event event : eventMap.values()) {
             if (event.getName().equals(eventName)) {
                 logger.info("Events found by name: {}", eventName);
                 return event;
@@ -63,7 +63,7 @@ public class EventInMemDaoImpl implements EventDao {
 
     @Override
     public boolean existsByName(String eventName) {
-        for (Events event : eventMap.values()) {
+        for (Event event : eventMap.values()) {
             if (event.getName().equals(eventName)) {
                 logger.info("Events exists by name: {}", eventName);
                 return true;
@@ -74,13 +74,13 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Map<Long, Events> getAllEvents() {
+    public Map<Long, Event> getAllEvents() {
         logger.info("All events returned from memory");
         return eventMap;
     }
 
     @Override
-    public Events findById(Long id) throws EventNotFoundException {
+    public Event findById(Long id) throws EventNotFoundException {
         if (!eventMap.containsKey(id)) {
             throw new EventNotFoundException("Events with ID: " + id + " not found.");
         }
@@ -89,7 +89,7 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Collection<Events> findByNameContainingIgnoreCase(String keyword) {
+    public Collection<Event> findByNameContainingIgnoreCase(String keyword) {
         return eventMap.values()
                 .stream()
                 .filter(event -> event.getName().toLowerCase(Locale.ROOT)

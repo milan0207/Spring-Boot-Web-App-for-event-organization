@@ -2,7 +2,9 @@ package edu.bbte.idde.kmim2248.controller;
 
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.model.EventDTO;
+import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
+import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
+import edu.bbte.idde.kmim2248.service.dto.ResponseDTO;
 import edu.bbte.idde.kmim2248.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -25,7 +27,7 @@ public class EventController {
 
     // Get all entities
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEntities(@RequestParam(required = false) String name)
+    public ResponseEntity<List<EventOutDTO>> getAllEntities(@RequestParam(required = false) String name)
             throws DaoOperationException {
         if (name != null && !name.isEmpty()) {
             return ResponseEntity.ok(eventService.searchEntities(name));
@@ -35,47 +37,47 @@ public class EventController {
 
     // Get event by ID
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable Long id)
+    public ResponseEntity<EventOutDTO> getEventById(@PathVariable Long id)
             throws DaoOperationException, EventNotFoundException {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     // Create new event
     @PostMapping
-    public ResponseEntity<Object> createEvent(@Valid @RequestBody EventDTO eventDTO, BindingResult result)
-            throws InvalidEventExcpetion, DaoOperationException {
+    public ResponseEntity<EventOutDTO> createEvent(@Valid @RequestBody EventInDTO eventDTO, BindingResult result)
+            throws InvalidEventException, DaoOperationException {
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(", "));
 
-            throw new InvalidEventExcpetion("Validation failed, " + errorMessages);
+            throw new InvalidEventException("Validation failed, " + errorMessages);
         }
         return ResponseEntity.ok(eventService.createEvent(eventDTO));
     }
 
     // Update event
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateEvent(@PathVariable Long id,
-                                              @Valid @RequestBody EventDTO eventDTO, BindingResult result)
-            throws InvalidEventExcpetion, DaoOperationException, EventNotFoundException {
+    public ResponseEntity<EventOutDTO> updateEvent(@PathVariable Long id,
+                                                   @Valid @RequestBody EventInDTO eventDTO, BindingResult result)
+            throws InvalidEventException, DaoOperationException, EventNotFoundException {
 
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(", "));
 
-            throw new InvalidEventExcpetion("Validation failed, " + errorMessages);
+            throw new InvalidEventException("Validation failed, " + errorMessages);
         }
         return ResponseEntity.ok(eventService.updateEvent(id, eventDTO));
     }
 
     // Delete event
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteEvent(@PathVariable Long id)
+    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id)
             throws DaoOperationException, EventNotFoundException {
         eventService.deleteEvent(id);
-        Response response = new Response("Event deleted successfully", 200);
-        return ResponseEntity.ok(response);
+        ResponseDTO responseDTO = new ResponseDTO("Event deleted successfully", 200);
+        return ResponseEntity.ok(responseDTO);
     }
 }

@@ -1,4 +1,4 @@
-package edu.bbte.idde.kmim2248.model;
+package edu.bbte.idde.kmim2248.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,9 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventDTO {
-
-    private Long id;
+public class EventInDTO {
 
     @NotBlank(message = "Name is mandatory")
     private String name;
@@ -36,7 +34,4 @@ public class EventDTO {
     @Positive(message = "Duration must be positive")
     private int duration;
 
-    public Boolean isOnline() {
-        return online;
-    }
 }

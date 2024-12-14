@@ -4,7 +4,7 @@ import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.dao.impl.datasource.DataSourceConfiguration;
-import edu.bbte.idde.kmim2248.model.Events;
+import edu.bbte.idde.kmim2248.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +38,14 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public void save(Events event) throws DaoOperationException {
+    public void save(Event event) throws DaoOperationException {
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
-            stmt.setBoolean(4, event.isOnline());
+            stmt.setBoolean(4, event.getOnline());
             stmt.setInt(5, event.getDuration());
             stmt.executeUpdate();
             logger.info("Event saved: {}", event);
@@ -58,7 +58,7 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public void update(Events event) throws EventNotFoundException, DaoOperationException {
+    public void update(Event event) throws EventNotFoundException, DaoOperationException {
         String sql = "UPDATE events SET name = ?, place = ?, date = ?, online = ?, duration = ? WHERE id = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class EventJdbcDaoImpl implements EventDao {
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getPlace());
             stmt.setDate(3, Date.valueOf(event.getDate()));
-            stmt.setBoolean(4, event.isOnline());
+            stmt.setBoolean(4, event.getOnline());
             stmt.setInt(5, event.getDuration());
             stmt.setLong(6, event.getId());
             int rows = stmt.executeUpdate();
@@ -104,7 +104,7 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Events findById(Long id) throws EventNotFoundException, DaoOperationException {
+    public Event findById(Long id) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE id = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class EventJdbcDaoImpl implements EventDao {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Events event = new Events(rs.getString("name"), rs.getString("place"),
+                    Event event = new Event(rs.getString("name"), rs.getString("place"),
                             rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     event.setId(rs.getLong("id"));
                     logger.info("Events found: {}", event);
@@ -129,7 +129,7 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Events findByName(String name) throws EventNotFoundException, DaoOperationException {
+    public Event findByName(String name) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -137,7 +137,7 @@ public class EventJdbcDaoImpl implements EventDao {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Events event = new Events(rs.getString("name"), rs.getString("place"),
+                    Event event = new Event(rs.getString("name"), rs.getString("place"),
                             rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     event.setId(rs.getLong("id"));
                     logger.info("Events found: {}", event);
@@ -171,14 +171,14 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Map<Long, Events> getAllEvents() throws DaoOperationException {
+    public Map<Long, Event> getAllEvents() throws DaoOperationException {
         String sql = "SELECT * FROM events";
-        Map<Long, Events> events = new ConcurrentHashMap<>();
+        Map<Long, Event> events = new ConcurrentHashMap<>();
         try (Connection conn = dataSourceConfiguration.getConnection(); Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Events event = new Events(rs.getString("name"), rs.getString("place"),
+                Event event = new Event(rs.getString("name"), rs.getString("place"),
                         rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                 event.setId(rs.getLong("id"));
                 logger.info("Events found: {}", event);
@@ -211,16 +211,16 @@ public class EventJdbcDaoImpl implements EventDao {
 
 
     @Override
-    public Collection<Events> findByNameContainingIgnoreCase(String name) throws DaoOperationException {
+    public Collection<Event> findByNameContainingIgnoreCase(String name) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name LIKE ?";
-        Collection<Events> events = new ArrayList<>();
+        Collection<Event> events = new ArrayList<>();
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name + "%");
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Events event = new Events(rs.getString("name"), rs.getString("place"),
+                    Event event = new Event(rs.getString("name"), rs.getString("place"),
                             rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     event.setId(rs.getLong("id"));
                     logger.info("Events found xd: {}", event);

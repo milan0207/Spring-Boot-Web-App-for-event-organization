@@ -1,32 +1,31 @@
 package edu.bbte.idde.kmim2248.service;
 
-import edu.bbte.idde.kmim2248.model.EventDTO;
-import edu.bbte.idde.kmim2248.model.Events;
+import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
+import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
+import edu.bbte.idde.kmim2248.model.Event;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventMapper {
 
-    public EventDTO toDTO(Events event) {
-        EventDTO dto = new EventDTO();
+    public Event toEvent(EventInDTO dto) {
+        Event event = new Event();
+        event.setName(dto.getName());
+        event.setPlace(dto.getPlace());
+        event.setDate(dto.getDate());
+        event.setOnline(dto.getOnline());
+        event.setDuration(dto.getDuration());
+        return event;
+    }
+
+    public EventOutDTO toEventOutDTO(Event event) {
+        EventOutDTO dto = new EventOutDTO();
         dto.setId(event.getId());
         dto.setName(event.getName());
         dto.setPlace(event.getPlace());
         dto.setDate(event.getDate());
-        dto.setOnline(event.isOnline());
+        dto.setOnline(event.getOnline());
         dto.setDuration(event.getDuration());
         return dto;
-    }
-
-    public Events toEvent(EventDTO dto) {
-        Events events = new Events();
-        events.setId(dto.getId());
-        events.setName(dto.getName());
-        events.setPlace(dto.getPlace());
-        events.setDate(dto.getDate());
-        events.setOnline(dto.isOnline());
-        events.setDuration(dto.getDuration());
-
-        return events;
     }
 }

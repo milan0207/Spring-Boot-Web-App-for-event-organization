@@ -2,6 +2,7 @@ package edu.bbte.idde.kmim2248.controller;
 
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.service.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,24 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GeneralExceptionHandler {
 
     @ExceptionHandler(EventNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public Response handleEventNotFoundException(EventNotFoundException e) {
-        return new Response(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    public ResponseDTO handleEventNotFoundException(EventNotFoundException e) {
+        return new ResponseDTO(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     @ExceptionHandler(DaoOperationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public Response handleDaoOperationException(DaoOperationException e) {
-        return new Response(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+    public ResponseDTO handleDaoOperationException(DaoOperationException e) {
+        return new ResponseDTO(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @ExceptionHandler(InvalidEventExcpetion.class)
+    @ExceptionHandler(InvalidEventException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Response handleInvalidEventException(InvalidEventExcpetion e) {
-        return new Response(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    public ResponseDTO handleInvalidEventException(InvalidEventException e) {
+        return new ResponseDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
 }
