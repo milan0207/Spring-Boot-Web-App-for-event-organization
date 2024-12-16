@@ -33,6 +33,6 @@ public class ConfigLoader {
 }
 
 /*
-set APP_PROFILE=prod
+set APP_PROFILE=dev
 echo %APP_PROFILE%
 * */
