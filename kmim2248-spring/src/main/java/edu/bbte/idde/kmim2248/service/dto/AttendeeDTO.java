@@ -19,6 +19,4 @@ public class AttendeeDTO {
     @NotBlank(message = "Place is mandatory")
     @Size(min = 3, max = 10, message = "phone must be between 3 and 10 characters")
     private String phone;
-
-
 }
