@@ -3,11 +3,13 @@ package edu.bbte.idde.kmim2248.dao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface EventDao {
     Event save(Event event) throws DaoOperationException, EventNotFoundException;
 

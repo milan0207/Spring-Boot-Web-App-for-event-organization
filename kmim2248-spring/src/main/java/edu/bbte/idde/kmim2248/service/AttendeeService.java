@@ -8,11 +8,13 @@ import edu.bbte.idde.kmim2248.model.Attendee;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.dto.AttendeeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@Profile("jpa")
 public class AttendeeService {
 
     @Autowired

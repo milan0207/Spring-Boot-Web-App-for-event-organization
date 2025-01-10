@@ -17,7 +17,9 @@ import java.util.Optional;
 public class EventService {
 
 
+    @Autowired
     private final EventDao eventDao;
+    @Autowired
     private final EventMapper eventMapper;
 
     @Autowired
