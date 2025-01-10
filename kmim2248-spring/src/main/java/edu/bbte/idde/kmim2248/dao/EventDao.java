@@ -5,24 +5,23 @@ import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.model.Event;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 
 public interface EventDao {
-    void save(Event event) throws DaoOperationException;
+    Event save(Event event) throws DaoOperationException, EventNotFoundException;
 
-    void update(Event event) throws EventNotFoundException, DaoOperationException;
+    void deleteById(Long id) throws EventNotFoundException, DaoOperationException;
 
-    void delete(Long id) throws EventNotFoundException, DaoOperationException;
+    Optional<Event> findByName(String eventName) throws DaoOperationException;
 
-    Event findByName(String eventName) throws EventNotFoundException, DaoOperationException;
-
-    boolean existsByName(String eventName) throws DaoOperationException;
+    boolean existsByName(String name) throws DaoOperationException;
 
     boolean existsById(Long id) throws DaoOperationException;
 
-    Map<Long, Event> getAllEvents() throws DaoOperationException;
+    List<Event> findAll() throws DaoOperationException;
 
-    Event findById(Long id) throws EventNotFoundException, DaoOperationException;
+    Optional<Event> findById(Long id) throws EventNotFoundException, DaoOperationException;
 
     Collection<Event> findByNameContainingIgnoreCase(String keyword) throws DaoOperationException;
 }

@@ -3,6 +3,7 @@ package edu.bbte.idde.kmim2248.service;
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.service.dto.AttendeeDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventService {
@@ -25,32 +27,41 @@ public class EventService {
     }
 
     public List<EventOutDTO> getAllEvents() throws DaoOperationException {
-        return eventDao.getAllEvents()
-                .values()
-                .stream()
+        return eventDao.findAll().stream()
                 .map(eventMapper::toEventOutDTO)
                 .toList();
     }
 
     public EventOutDTO getEventById(Long id) throws EventNotFoundException, DaoOperationException {
-        Event event = eventDao.findById(id);
-        return eventMapper.toEventOutDTO(event);
+
+        Optional<Event> event = eventDao.findById(id);
+        if (event.isEmpty()) {
+            throw new EventNotFoundException("Event not found with id: " + id);
+        } else {
+            return eventMapper.toEventOutDTO(event.get());
+        }
     }
 
-    public EventOutDTO createEvent(EventInDTO eventDTO) throws DaoOperationException {
-        Event event = eventMapper.toEvent(eventDTO);
+    public EventOutDTO createEvent(EventInDTO eventDTO) throws DaoOperationException, EventNotFoundException {
+        Event event = eventMapper.toEvent(eventDTO, null);
         eventDao.save(event);
         return eventMapper.toEventOutDTO(event);
     }
 
-    public EventOutDTO updateEvent(Long id, EventInDTO eventDTO) throws DaoOperationException, EventNotFoundException {
-        Event existingEvent = eventDao.findById(id);
-        eventDao.update(eventMapper.toEvent(eventDTO));
-        return eventMapper.toEventOutDTO(existingEvent);
+    public EventOutDTO updateEvent(Long id, EventInDTO eventDTO)
+            throws DaoOperationException, EventNotFoundException {
+        Optional<Event> existingEvent = eventDao.findById(id);
+
+        eventDao.save(eventMapper.toEvent(eventDTO, id));
+        if (existingEvent.isEmpty()) {
+            throw new EventNotFoundException("Event not found with id: " + id);
+        } else {
+            return eventMapper.toEventOutDTO(existingEvent.get());
+        }
     }
 
     public void deleteEvent(Long id) throws DaoOperationException, EventNotFoundException {
-        eventDao.delete(id);
+        eventDao.deleteById(id);
     }
 
     public List<EventOutDTO> searchEntities(String keyword) throws DaoOperationException {
@@ -58,5 +69,16 @@ public class EventService {
                 .map(eventMapper::toEventOutDTO)
                 .toList();
     }
+
+    public List<AttendeeDTO> getAttendeesByEvent(Long eventId)
+            throws DaoOperationException, EventNotFoundException {
+        Event event = eventDao.findById(eventId).orElseThrow(() ->
+                new EventNotFoundException("Event not found with id: " + eventId));
+        return event.getAttendees().stream()
+                .map(AttendeeMapper::toAttendeeDTO)
+                .toList();
+    }
+
 }
+
 

@@ -45,7 +45,7 @@ public class EventController {
     // Create new event
     @PostMapping
     public ResponseEntity<EventOutDTO> createEvent(@Valid @RequestBody EventInDTO eventDTO, BindingResult result)
-            throws InvalidEventException, DaoOperationException {
+            throws InvalidEventException, DaoOperationException, EventNotFoundException {
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
