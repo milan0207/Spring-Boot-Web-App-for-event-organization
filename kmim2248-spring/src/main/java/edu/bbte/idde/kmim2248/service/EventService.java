@@ -8,6 +8,8 @@ import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,13 +30,11 @@ public class EventService {
         this.eventMapper = eventMapper;
     }
 
-    public List<EventOutDTO> getAllEvents() throws DaoOperationException {
-        return eventDao.findAll().stream()
-                .map(eventMapper::toEventOutDTO)
-                .toList();
+    public Page<EventOutDTO> getAllEvents(Pageable pageable) {
+        return eventDao.findAll(pageable).map(eventMapper::toEventOutDTO);
     }
 
-    public EventOutDTO getEventById(Long id) throws EventNotFoundException, DaoOperationException {
+    public EventOutDTO getEventById(Long id) throws EventNotFoundException {
 
         Optional<Event> event = eventDao.findById(id);
         if (event.isEmpty()) {
@@ -44,7 +44,7 @@ public class EventService {
         }
     }
 
-    public EventOutDTO createEvent(EventInDTO eventDTO) throws DaoOperationException, EventNotFoundException {
+    public EventOutDTO createEvent(EventInDTO eventDTO) {
         Event event = eventMapper.toEvent(eventDTO, null);
         eventDao.save(event);
         return eventMapper.toEventOutDTO(event);
@@ -62,14 +62,12 @@ public class EventService {
         }
     }
 
-    public void deleteEvent(Long id) throws DaoOperationException, EventNotFoundException {
+    public void deleteEvent(Long id) {
         eventDao.deleteById(id);
     }
 
-    public List<EventOutDTO> searchEntities(String keyword) throws DaoOperationException {
-        return eventDao.findByNameContainingIgnoreCase(keyword).stream()
-                .map(eventMapper::toEventOutDTO)
-                .toList();
+    public Page<EventOutDTO> searchEntities(String keyword, Pageable pageable) {
+        return eventDao.findByNameContainingIgnoreCase(keyword, pageable).map(eventMapper::toEventOutDTO);
     }
 
     public List<AttendeeDTO> getAttendeesByEvent(Long eventId)
