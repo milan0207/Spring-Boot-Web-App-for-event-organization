@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Repository
-@Profile("prod")
+@Profile({"prod", "jpa"})
 public class DataSourceConfiguration {
 
     @Value("${spring.datasource.url}")

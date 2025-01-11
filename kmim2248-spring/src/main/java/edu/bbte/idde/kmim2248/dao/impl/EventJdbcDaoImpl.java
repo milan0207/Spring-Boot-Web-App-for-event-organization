@@ -12,10 +12,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.sql.Date;
+import java.util.*;
 
 
 @Profile("prod")
@@ -38,7 +36,29 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public void save(Event event) throws DaoOperationException {
+    public Event save(Event event) throws DaoOperationException, EventNotFoundException {
+        if (event.getId() != null) {
+            String sql = "UPDATE events SET name = ?, place = ?, date = ?, online = ?, duration = ? WHERE id = ?";
+            try (Connection conn = dataSourceConfiguration.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, event.getName());
+                stmt.setString(2, event.getPlace());
+                stmt.setDate(3, Date.valueOf(event.getDate()));
+                stmt.setBoolean(4, event.getOnline());
+                stmt.setInt(5, event.getDuration());
+                stmt.setLong(6, event.getId());
+                int rows = stmt.executeUpdate();
+                if (rows == 0) {
+                    throw new EventNotFoundException("Events not found: " + event.getName());
+                }
+                logger.info("Events updated: {}", event);
+
+            } catch (SQLException e) {
+                logger.error("Error updating event", e);
+                throw new DaoOperationException("Error updating event", e);
+            }
+        }
         String sql = "INSERT INTO events (name, place, date, online, duration) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -54,36 +74,11 @@ public class EventJdbcDaoImpl implements EventDao {
             logger.error("Error saving event", e);
             throw new DaoOperationException("Error saving event", e);
         }
-
+        return event;
     }
 
     @Override
-    public void update(Event event) throws EventNotFoundException, DaoOperationException {
-        String sql = "UPDATE events SET name = ?, place = ?, date = ?, online = ?, duration = ? WHERE id = ?";
-        try (Connection conn = dataSourceConfiguration.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, event.getName());
-            stmt.setString(2, event.getPlace());
-            stmt.setDate(3, Date.valueOf(event.getDate()));
-            stmt.setBoolean(4, event.getOnline());
-            stmt.setInt(5, event.getDuration());
-            stmt.setLong(6, event.getId());
-            int rows = stmt.executeUpdate();
-            if (rows == 0) {
-                throw new EventNotFoundException("Events not found: " + event.getName());
-            }
-            logger.info("Events updated: {}", event);
-
-        } catch (SQLException e) {
-            logger.error("Error updating event", e);
-            throw new DaoOperationException("Error updating event", e);
-        }
-
-    }
-
-    @Override
-    public void delete(Long id) throws EventNotFoundException, DaoOperationException {
+    public void deleteById(Long id) throws EventNotFoundException, DaoOperationException {
         String sql = "DELETE FROM events WHERE id = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -104,7 +99,7 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Event findById(Long id) throws EventNotFoundException, DaoOperationException {
+    public Optional<Event> findById(Long id) throws EventNotFoundException, DaoOperationException {
         String sql = "SELECT * FROM events WHERE id = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -116,7 +111,7 @@ public class EventJdbcDaoImpl implements EventDao {
                             rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     event.setId(rs.getLong("id"));
                     logger.info("Events found: {}", event);
-                    return event;
+                    return Optional.of(event);
                 } else {
                     throw new EventNotFoundException("Events not found: " + id);
                 }
@@ -129,7 +124,7 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Event findByName(String name) throws EventNotFoundException, DaoOperationException {
+    public Optional<Event> findByName(String name) throws DaoOperationException {
         String sql = "SELECT * FROM events WHERE name = ?";
         try (Connection conn = dataSourceConfiguration.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -141,16 +136,14 @@ public class EventJdbcDaoImpl implements EventDao {
                             rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                     event.setId(rs.getLong("id"));
                     logger.info("Events found: {}", event);
-                    return event;
-                } else {
-                    throw new EventNotFoundException("Events not found: " + name);
+                    return Optional.of(event);
                 }
             }
-
         } catch (SQLException e) {
             logger.error("Error finding event", e);
             throw new DaoOperationException("Error finding event", e);
         }
+        return Optional.empty();
     }
 
     @Override
@@ -171,9 +164,9 @@ public class EventJdbcDaoImpl implements EventDao {
     }
 
     @Override
-    public Map<Long, Event> getAllEvents() throws DaoOperationException {
+    public List<Event> findAll() throws DaoOperationException {
         String sql = "SELECT * FROM events";
-        Map<Long, Event> events = new ConcurrentHashMap<>();
+        List<Event> events = new ArrayList<>();
         try (Connection conn = dataSourceConfiguration.getConnection(); Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -182,7 +175,7 @@ public class EventJdbcDaoImpl implements EventDao {
                         rs.getDate("date").toLocalDate(), rs.getBoolean("online"), rs.getInt("duration"));
                 event.setId(rs.getLong("id"));
                 logger.info("Events found: {}", event);
-                events.put(event.getId(), event);
+                events.add(event);
             }
 
         } catch (SQLException e) {

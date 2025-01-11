@@ -3,4 +3,5 @@ include 'kmim2248-backend'
 include 'kmim2248-web'
 include 'kmim2248-desktop'
 include 'kmim2248-spring'
+include 'kmim2248-spring-jpa'
 
