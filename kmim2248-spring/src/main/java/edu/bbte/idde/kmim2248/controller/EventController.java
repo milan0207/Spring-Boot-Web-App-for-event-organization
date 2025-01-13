@@ -85,7 +85,7 @@ public class EventController {
 
     // Delete event
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id) throws DaoOperationException, EventNotFoundException {
         eventService.deleteEvent(id);
         ResponseDTO responseDTO = new ResponseDTO("Event deleted successfully", 200);
         return ResponseEntity.ok(responseDTO);

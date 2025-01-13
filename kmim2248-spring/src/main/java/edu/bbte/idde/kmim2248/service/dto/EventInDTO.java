@@ -3,6 +3,7 @@ package edu.bbte.idde.kmim2248.service.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Positive;
