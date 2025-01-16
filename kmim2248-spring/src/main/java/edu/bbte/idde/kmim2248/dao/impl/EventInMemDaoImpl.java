@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Profile("dev")
@@ -25,24 +23,16 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public void save(Event event) {
+    public Event save(Event event) {
         event.setId(id);
         eventMap.put(id, event);
         id++;
         logger.info("Events saved: {}", event);
+        return event;
     }
 
     @Override
-    public void update(Event event) throws EventNotFoundException {
-        if (!eventMap.containsKey(event.getId())) {
-            throw new EventNotFoundException("Events with ID: " + event.getId() + " not found.");
-        }
-        eventMap.put(event.getId(), event);
-        logger.info("Events updated: {}", event);
-    }
-
-    @Override
-    public void delete(Long id) throws EventNotFoundException {
+    public void deleteById(Long id) throws EventNotFoundException {
         if (!eventMap.containsKey(id)) {
             throw new EventNotFoundException("Events with ID: " + id + " not found.");
         }
@@ -51,14 +41,15 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Event findByName(String eventName) throws EventNotFoundException {
+    public Optional<Event> findByName(String eventName) {
         for (Event event : eventMap.values()) {
             if (event.getName().equals(eventName)) {
                 logger.info("Events found by name: {}", eventName);
-                return event;
+                return Optional.of(event);
             }
         }
-        throw new EventNotFoundException("Events not found" + eventName);
+        logger.info("Events not found by name: {}", eventName);
+        return Optional.empty();
     }
 
     @Override
@@ -74,18 +65,18 @@ public class EventInMemDaoImpl implements EventDao {
     }
 
     @Override
-    public Map<Long, Event> getAllEvents() {
+    public List<Event> findAll() {
         logger.info("All events returned from memory");
-        return eventMap;
+        return new ArrayList<>(eventMap.values());
     }
 
     @Override
-    public Event findById(Long id) throws EventNotFoundException {
+    public Optional<Event> findById(Long id) throws EventNotFoundException {
         if (!eventMap.containsKey(id)) {
             throw new EventNotFoundException("Events with ID: " + id + " not found.");
         }
         logger.info("Events found by ID: {}", id);
-        return eventMap.get(id);
+        return Optional.ofNullable(eventMap.get(id));
     }
 
     @Override

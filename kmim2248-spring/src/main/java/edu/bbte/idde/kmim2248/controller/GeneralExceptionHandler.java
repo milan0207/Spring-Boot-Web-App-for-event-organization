@@ -1,5 +1,6 @@
 package edu.bbte.idde.kmim2248.controller;
 
+import edu.bbte.idde.kmim2248.dao.exception.AttendeeNotFoundExcpetion;
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
 import edu.bbte.idde.kmim2248.service.dto.ResponseDTO;
@@ -31,6 +32,13 @@ public class GeneralExceptionHandler {
     @ResponseBody
     public ResponseDTO handleInvalidEventException(InvalidEventException e) {
         return new ResponseDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(AttendeeNotFoundExcpetion.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ResponseDTO handleAttendeeNotFoundException(AttendeeNotFoundExcpetion e) {
+        return new ResponseDTO(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
 }
