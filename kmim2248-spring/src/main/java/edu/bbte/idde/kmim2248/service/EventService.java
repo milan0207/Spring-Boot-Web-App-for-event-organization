@@ -1,7 +1,9 @@
 package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
+import edu.bbte.idde.kmim2248.dao.EventSpecification;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.service.dto.EventFilterDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
@@ -40,7 +42,7 @@ public class EventService {
         }
     }
 
-    @Cacheable(value = "allEvents")
+    @Cacheable(value = "allEvents", key="#pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
     public Page<EventOutDTO> getAllEvents(Pageable pageable) {
         return eventDao.findAll(pageable).map(eventMapper::toEventOutDTO);
     }
@@ -79,6 +81,11 @@ public class EventService {
         return eventDao.findByNameContainingIgnoreCase(keyword, pageable).map(eventMapper::toEventOutDTO);
     }
 
+    @Cacheable(value = "filteredEvents", key = "#filterDTO + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
+    public Page<EventOutDTO> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
+        return eventDao.findAll(EventSpecification.filterBy(filterDTO), pageable)
+                .map(eventMapper::toEventOutDTO);
+    }
 }
 
 
