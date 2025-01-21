@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
-import java.util.Optional;
 
+import java.util.Optional;
 
 
 @Service
@@ -42,7 +42,8 @@ public class EventService {
         }
     }
 
-    @Cacheable(value = "allEvents", key="#pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
+    @Cacheable(value = "allEvents",
+            key = "#pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
     public Page<EventOutDTO> getAllEvents(Pageable pageable) {
         return eventDao.findAll(pageable).map(eventMapper::toEventOutDTO);
     }
@@ -61,8 +62,11 @@ public class EventService {
         }
     }
 
-    @CacheEvict(value = "events", key = "#id")
-    public void deleteEvent(Long id) throws EventNotFoundException {
+    @Caching(evict = {
+            @CacheEvict(value = "events", key = "#id"),
+            @CacheEvict(value = "allEvents", allEntries = true)
+    })
+    public void deleteEvent(Long id) {
         eventDao.deleteById(id);
     }
 
@@ -77,12 +81,17 @@ public class EventService {
         return eventMapper.toEventOutDTO(event);
     }
 
-    @Cacheable(value = "searchResults", key = "#keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
+
+    @Cacheable(value = "searchResults",
+            key = "#keyword + '_' + #pageable.pageNumber + '_' +"
+                    + " #pageable.pageSize + '_' + #pageable.sort.toString()")
     public Page<EventOutDTO> searchEntities(String keyword, Pageable pageable) {
         return eventDao.findByNameContainingIgnoreCase(keyword, pageable).map(eventMapper::toEventOutDTO);
     }
 
-    @Cacheable(value = "filteredEvents", key = "#filterDTO + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
+    @Cacheable(value = "filteredEvents",
+            key = "#filterDTO + '_' + #pageable.pageNumber + '_' + "
+                    + "#pageable.pageSize + '_' + #pageable.sort.toString()")
     public Page<EventOutDTO> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
         return eventDao.findAll(EventSpecification.filterEvent(filterDTO), pageable)
                 .map(eventMapper::toEventOutDTO);

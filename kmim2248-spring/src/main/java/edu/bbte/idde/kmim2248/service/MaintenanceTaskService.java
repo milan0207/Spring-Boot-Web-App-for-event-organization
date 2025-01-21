@@ -22,6 +22,8 @@ public class MaintenanceTaskService {
     @Autowired
     private AttendeeJpa attendeeJpa;
 
+
+
     @Scheduled(cron = "0 0 0 * * ?") // Futtatás minden nap ejfelkor
     @Scheduled(fixedRate = 37000) //Teszteles erdekeben minden 30mp
     public void deleteOldEvents() {

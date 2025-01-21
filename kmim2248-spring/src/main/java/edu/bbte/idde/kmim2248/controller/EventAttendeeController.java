@@ -32,48 +32,37 @@ public class EventAttendeeController {
     @Autowired
     private AttendeeService attendeeService;
 
-    @GetMapping("/{eventId}/attendees")
     public ResponseEntity<Page<AttendeeDTO>> getAttendeesByEvent(
             @PathVariable Long eventId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email,
+            AttendeeFilterDTO filterDTO,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction)
             throws DaoOperationException, EventNotFoundException {
 
-
         Event event = EventMapper.toEvent(eventService.getEventById(eventId));
-
-
         List<AttendeeDTO> attendeeDTOs = AttendeeMapper.toAttendeeDTOList(event.getAttendees());
-
-        boolean hasFilters = name != null || email != null;
-        if(hasFilters)
-        {
-            AttendeeFilterDTO filterDTO = new AttendeeFilterDTO();
-            filterDTO.setName(name);
-            filterDTO.setEmail(email);
-            return ResponseEntity.ok(attendeeService.filterAttendees(filterDTO, PageRequest.of(page, size,
-                    "asc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending())));
-        }
 
         Pageable pageable = PageRequest.of(page, size,
                 "asc".equalsIgnoreCase(direction)
                         ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
 
-        int start = Math.min((int) pageable.getOffset(), attendeeDTOs.size());
+        boolean hasFilters = filterDTO.getName() != null || filterDTO.getEmail() != null;
+        if (hasFilters) {
+            return ResponseEntity.ok(attendeeService.filterAttendees(filterDTO, pageable));
+        }
 
+        int start = Math.min((int) pageable.getOffset(), attendeeDTOs.size());
         int end = Math.min(start + pageable.getPageSize(), attendeeDTOs.size());
         List<AttendeeDTO> paginatedAttendees = attendeeDTOs.subList(start, end);
 
-        Page<AttendeeDTO> attendeePage = new org.springframework.data.domain.PageImpl
-                <>(paginatedAttendees, pageable, attendeeDTOs.size());
+        Page<AttendeeDTO> attendeePage = new org.springframework.data.domain.PageImpl<>(
+                paginatedAttendees, pageable, attendeeDTOs.size());
 
         return ResponseEntity.ok(attendeePage);
     }
+
 
 
     @PostMapping("/{eventId}/attendees")

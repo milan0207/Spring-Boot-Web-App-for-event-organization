@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,50 +33,36 @@ public class EventController {
     public ResponseEntity<Page<EventOutDTO>> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
         return ResponseEntity.ok(eventService.filterEvents(filterDTO, pageable));
     }
+
     @GetMapping
     public ResponseEntity<Page<EventOutDTO>> getAllEntities(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false)  String place,
-            @RequestParam(required = false)  LocalDate minDate,
-            @RequestParam(required = false)  LocalDate maxDate,
-            @RequestParam(defaultValue = "-1",required = false) int minDuration,
-            @RequestParam(defaultValue = "-1",required = false) int maxDuration,
-            @RequestParam(required = false)  Boolean online,
+            EventFilterDTO filterDTO,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
+
         Pageable pageable = PageRequest.of(page, size,
                 "asc".equalsIgnoreCase(direction)
-                        ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
-        boolean hasFilters = name != null || place != null || minDate != null || maxDate != null
-                || minDuration != -1 || maxDuration != -1 || online != null;
+                        ? Sort.by(sortBy).ascending()
+                        : Sort.by(sortBy).descending());
+
+        boolean hasFilters = filterDTO.getName() != null || filterDTO.getPlace() != null
+                || filterDTO.getMinDate() != null || filterDTO.getMaxDate() != null
+                || filterDTO.getMinDuration() != null || filterDTO.getMaxDuration() != null
+                || filterDTO.getOnline() != null;
 
         if (hasFilters) {
-            EventFilterDTO filterDTO = new EventFilterDTO();
-            filterDTO.setName(name);
-            filterDTO.setPlace(place);
-            filterDTO.setMinDate(minDate);
-            filterDTO.setMaxDate(maxDate);
-            if (minDuration != -1) {
-                filterDTO.setMinDuration(minDuration);
-            }
-            if (maxDuration != -1) {
-                filterDTO.setMaxDuration(maxDuration);
-            }
-
-            filterDTO.setOnline(online);
-
             return ResponseEntity.ok(eventService.filterEvents(filterDTO, pageable));
         }
 
-
-
-        if (name != null && !name.isEmpty()) {
-            return ResponseEntity.ok(eventService.searchEntities(name, pageable));
+        if (filterDTO.getName() != null && !filterDTO.getName().isEmpty()) {
+            return ResponseEntity.ok(eventService.searchEntities(filterDTO.getName(), pageable));
         }
+
         return ResponseEntity.ok(eventService.getAllEvents(pageable));
     }
+
 
     // Get event by ID
     @GetMapping("/{id}")
@@ -118,16 +103,11 @@ public class EventController {
 
     // Delete event
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id) throws DaoOperationException, EventNotFoundException {
+    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
-        // Ellenőrzés, hogy tényleg törölve lett-e
-        if (eventService.getEventById(id)!=null) {
-            throw new EventNotFoundException("Failed to delete event with id: " + id);
-        }
         ResponseDTO responseDTO = new ResponseDTO("Event deleted successfully", 200);
         return ResponseEntity.ok(responseDTO);
     }
-
 
 
 }

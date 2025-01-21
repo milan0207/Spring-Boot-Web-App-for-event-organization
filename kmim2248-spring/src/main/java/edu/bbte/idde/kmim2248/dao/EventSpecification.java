@@ -10,6 +10,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Locale;
+
 public class EventSpecification {
 
     public static Specification<Event> filterEvent(EventFilterDTO filterDTO) {
@@ -17,10 +19,12 @@ public class EventSpecification {
             Predicate predicate = cb.conjunction();
 
             if (filterDTO.getName() != null) {
-                predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%" + filterDTO.getName().toLowerCase() + "%"));
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")),
+                        "%" + filterDTO.getName().toLowerCase(Locale.ROOT) + "%"));
             }
             if (filterDTO.getPlace() != null) {
-                predicate = cb.and(predicate, cb.like(cb.lower(root.get("place")), "%" + filterDTO.getPlace().toLowerCase() + "%"));
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("place")),
+                        "%" + filterDTO.getPlace().toLowerCase(Locale.ROOT) + "%"));
             }
             if (filterDTO.getOnline() != null) {
                 predicate = cb.and(predicate, cb.equal(root.get("online"), filterDTO.getOnline()));
@@ -32,7 +36,8 @@ public class EventSpecification {
                 predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("date"), filterDTO.getMaxDate()));
             }
             if (filterDTO.getMinDuration() != null) {
-                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("duration"), filterDTO.getMinDuration()));
+                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("duration"),
+                        filterDTO.getMinDuration()));
             }
             if (filterDTO.getMaxDuration() != null) {
                 predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("duration"), filterDTO.getMaxDuration()));
@@ -46,13 +51,15 @@ public class EventSpecification {
         return (Root<Attendee> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             Predicate predicate = cb.conjunction();
 
-            if (filterDTO.getName() != null ) {
-                predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%" + filterDTO.getName().toLowerCase() + "%"));
+            if (filterDTO.getName() != null) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%"
+                        + filterDTO.getName().toLowerCase(Locale.ROOT) + "%"));
 
             }
 
-            if (filterDTO.getEmail() != null ) {
-                predicate = cb.and(predicate, cb.like(cb.lower(root.get("email")), "%@" + filterDTO.getEmail().toLowerCase() + "%"));
+            if (filterDTO.getEmail() != null) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("email")), "%@"
+                        + filterDTO.getEmail().toLowerCase(Locale.ROOT) + "%"));
             }
 
             return predicate;

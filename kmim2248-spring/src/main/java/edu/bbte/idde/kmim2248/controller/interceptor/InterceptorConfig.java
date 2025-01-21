@@ -16,12 +16,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Az általános logger interceptor minden endpointra
         registry.addInterceptor(loggerInterceptor).addPathPatterns("/**");
 
-        // A jogosultság ellenőrző interceptor csak bizonyos endpointokra
         registry.addInterceptor(deleteAuthorizationInterceptor)
-                .addPathPatterns("/api/events/**"); // Csak az "/events/" endpointoknál
+                .addPathPatterns("/api/events/**");
     }
 }
 
