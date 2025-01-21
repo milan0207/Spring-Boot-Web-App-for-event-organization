@@ -62,9 +62,10 @@ public class EventService {
     }
 
     @CacheEvict(value = "events", key = "#id")
-    public void deleteEvent(Long id){
+    public void deleteEvent(Long id) throws EventNotFoundException {
         eventDao.deleteById(id);
     }
+
 
     @Caching(evict = {
             @CacheEvict(value = "events", allEntries = true),
@@ -83,7 +84,7 @@ public class EventService {
 
     @Cacheable(value = "filteredEvents", key = "#filterDTO + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
     public Page<EventOutDTO> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
-        return eventDao.findAll(EventSpecification.filterBy(filterDTO), pageable)
+        return eventDao.findAll(EventSpecification.filterEvent(filterDTO), pageable)
                 .map(eventMapper::toEventOutDTO);
     }
 }

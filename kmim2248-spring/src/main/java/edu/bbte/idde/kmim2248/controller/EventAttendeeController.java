@@ -10,6 +10,7 @@ import edu.bbte.idde.kmim2248.service.AttendeeService;
 import edu.bbte.idde.kmim2248.service.EventMapper;
 import edu.bbte.idde.kmim2248.service.EventService;
 import edu.bbte.idde.kmim2248.service.dto.AttendeeDTO;
+import edu.bbte.idde.kmim2248.service.dto.AttendeeFilterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
@@ -34,15 +35,30 @@ public class EventAttendeeController {
     @GetMapping("/{eventId}/attendees")
     public ResponseEntity<Page<AttendeeDTO>> getAttendeesByEvent(
             @PathVariable Long eventId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction)
             throws DaoOperationException, EventNotFoundException {
 
+
         Event event = EventMapper.toEvent(eventService.getEventById(eventId));
 
+
         List<AttendeeDTO> attendeeDTOs = AttendeeMapper.toAttendeeDTOList(event.getAttendees());
+
+        boolean hasFilters = name != null || email != null;
+        if(hasFilters)
+        {
+            AttendeeFilterDTO filterDTO = new AttendeeFilterDTO();
+            filterDTO.setName(name);
+            filterDTO.setEmail(email);
+            return ResponseEntity.ok(attendeeService.filterAttendees(filterDTO, PageRequest.of(page, size,
+                    "asc".equalsIgnoreCase(direction)
+                            ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending())));
+        }
 
         Pageable pageable = PageRequest.of(page, size,
                 "asc".equalsIgnoreCase(direction)
@@ -80,4 +96,5 @@ public class EventAttendeeController {
         attendeeService.deleteAttendeeFromEvent(event, attendeeId);
         return ResponseEntity.ok().build();
     }
+
 }

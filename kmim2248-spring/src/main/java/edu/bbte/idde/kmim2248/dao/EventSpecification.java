@@ -1,6 +1,8 @@
 package edu.bbte.idde.kmim2248.dao;
 
+import edu.bbte.idde.kmim2248.model.Attendee;
 import edu.bbte.idde.kmim2248.model.Event;
+import edu.bbte.idde.kmim2248.service.dto.AttendeeFilterDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventFilterDTO;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -10,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class EventSpecification {
 
-    public static Specification<Event> filterBy(EventFilterDTO filterDTO) {
+    public static Specification<Event> filterEvent(EventFilterDTO filterDTO) {
         return (Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             Predicate predicate = cb.conjunction();
 
@@ -39,4 +41,22 @@ public class EventSpecification {
             return predicate;
         };
     }
+
+    public static Specification<Attendee> filterAttendee(AttendeeFilterDTO filterDTO) {
+        return (Root<Attendee> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (filterDTO.getName() != null ) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%" + filterDTO.getName().toLowerCase() + "%"));
+
+            }
+
+            if (filterDTO.getEmail() != null ) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("email")), "%@" + filterDTO.getEmail().toLowerCase() + "%"));
+            }
+
+            return predicate;
+        };
+    }
+
 }
