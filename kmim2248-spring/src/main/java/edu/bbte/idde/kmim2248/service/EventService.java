@@ -49,8 +49,8 @@ public class EventService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "events", key = "#id"),
-            @CacheEvict(value = "allEvents", allEntries = true)
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
     })
     public EventOutDTO updateEvent(Long id, EventInDTO eventDTO) throws EventNotFoundException {
         Optional<Event> existingEvent = eventDao.findById(id);
@@ -63,8 +63,8 @@ public class EventService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "events", key = "#id"),
-            @CacheEvict(value = "allEvents", allEntries = true)
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
     })
     public void deleteEvent(Long id) {
         eventDao.deleteById(id);
@@ -72,14 +72,15 @@ public class EventService {
 
 
     @Caching(evict = {
-            @CacheEvict(value = "events", allEntries = true),
-            @CacheEvict(value = "allEvents", allEntries = true)
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
     })
     public EventOutDTO createEvent(EventInDTO eventDTO) {
         Event event = eventMapper.toEvent(eventDTO, null);
         eventDao.save(event);
         return eventMapper.toEventOutDTO(event);
     }
+
 
 
     @Cacheable(value = "searchResults",

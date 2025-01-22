@@ -1,13 +1,17 @@
 package edu.bbte.idde.kmim2248.service;
 
+import edu.bbte.idde.kmim2248.controller.interceptor.DeleteAuthorizationInterceptor;
 import edu.bbte.idde.kmim2248.dao.EventDao;
 import edu.bbte.idde.kmim2248.dao.impl.AttendeeJpa;
 import edu.bbte.idde.kmim2248.model.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import edu.bbte.idde.kmim2248.model.Attendee;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +26,7 @@ public class MaintenanceTaskService {
     @Autowired
     private AttendeeJpa attendeeJpa;
 
-
+    Logger logger = LoggerFactory.getLogger(DeleteAuthorizationInterceptor.class);
 
     @Scheduled(cron = "0 0 0 * * ?") // Futtatás minden nap ejfelkor
     @Scheduled(fixedRate = 37000) //Teszteles erdekeben minden 30mp
@@ -33,7 +37,7 @@ public class MaintenanceTaskService {
 
         if (!oldEvents.isEmpty()) {
             eventDao.deleteAll(oldEvents);
-            System.out.println("TASK: Deleted " + oldEvents.size() + " old events (older than 10 years).");
+            logger.info("TASK: Deleted " + oldEvents.size() + " old events.");
         }
     }
 
@@ -46,7 +50,7 @@ public class MaintenanceTaskService {
 
         if (!pastEvents.isEmpty()) {
             eventDao.deleteAll(pastEvents);
-            System.out.println("TASK: Deleted " + pastEvents.size() + " past events without attendees.");
+            logger.info("TASK: Deleted " + pastEvents.size() + " past events without attendees.");
         }
     }
 
@@ -65,7 +69,7 @@ public class MaintenanceTaskService {
 
         if (!duplicates.isEmpty()) {
             attendeeJpa.deleteAll(duplicates);
-            System.out.println("TASK Deleted " + duplicates.size() + " duplicate attendees with the same email.");
+            logger.info("TASK: Deleted " + duplicates.size() + " duplicate attendees.");
         }
     }
 

@@ -4,3 +4,11 @@ futtatas elott Redis szerver inditasa:
 Testing redis connection (answer should be PONG):
 ``` docker exec -it redis redis-cli ping```
 ```
+
+
+PLuszok megcsinalva:
+ * Pageable
+ * cache
+ * filter
+ * task
+ * interceptor
