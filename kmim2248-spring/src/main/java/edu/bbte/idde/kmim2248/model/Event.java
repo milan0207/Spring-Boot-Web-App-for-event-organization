@@ -22,7 +22,8 @@ public class Event extends BaseEntity {
     private LocalDate date;
     private Boolean online;
     private int duration;
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.EAGER) //az eager az idoszakos taszk
+    // miatt, lazy fetch el nem talalta meg az adatokat
     private List<Attendee> attendees = new ArrayList<>();
 
     public Event(String name, String place, LocalDate date, Boolean online, int duration) {

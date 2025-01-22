@@ -2,17 +2,21 @@ package edu.bbte.idde.kmim2248.controller;
 
 import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
+import edu.bbte.idde.kmim2248.service.dto.EventFilterDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
 import edu.bbte.idde.kmim2248.service.dto.ResponseDTO;
 import edu.bbte.idde.kmim2248.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,27 +29,52 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    // Get all entities
-    @GetMapping
-    public ResponseEntity<List<EventOutDTO>> getAllEntities(@RequestParam(required = false) String name)
-            throws DaoOperationException {
-        if (name != null && !name.isEmpty()) {
-            return ResponseEntity.ok(eventService.searchEntities(name));
-        }
-        return ResponseEntity.ok(eventService.getAllEvents());
+    @GetMapping("/filter")
+    public ResponseEntity<Page<EventOutDTO>> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
+        return ResponseEntity.ok(eventService.filterEvents(filterDTO, pageable));
     }
+
+    @GetMapping
+    public ResponseEntity<Page<EventOutDTO>> getAllEntities(
+            EventFilterDTO filterDTO,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Pageable pageable = PageRequest.of(page, size,
+                "asc".equalsIgnoreCase(direction)
+                        ? Sort.by(sortBy).ascending()
+                        : Sort.by(sortBy).descending());
+
+        boolean hasFilters = filterDTO.getName() != null || filterDTO.getPlace() != null
+                || filterDTO.getMinDate() != null || filterDTO.getMaxDate() != null
+                || filterDTO.getMinDuration() != null || filterDTO.getMaxDuration() != null
+                || filterDTO.getOnline() != null;
+
+        if (hasFilters) {
+            return ResponseEntity.ok(eventService.filterEvents(filterDTO, pageable));
+        }
+
+        if (filterDTO.getName() != null && !filterDTO.getName().isEmpty()) {
+            return ResponseEntity.ok(eventService.searchEntities(filterDTO.getName(), pageable));
+        }
+
+        return ResponseEntity.ok(eventService.getAllEvents(pageable));
+    }
+
 
     // Get event by ID
     @GetMapping("/{id}")
     public ResponseEntity<EventOutDTO> getEventById(@PathVariable Long id)
-            throws DaoOperationException, EventNotFoundException {
+            throws EventNotFoundException {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     // Create new event
     @PostMapping
     public ResponseEntity<EventOutDTO> createEvent(@Valid @RequestBody EventInDTO eventDTO, BindingResult result)
-            throws InvalidEventException, DaoOperationException, EventNotFoundException {
+            throws InvalidEventException {
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -74,10 +103,11 @@ public class EventController {
 
     // Delete event
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id)
-            throws DaoOperationException, EventNotFoundException {
+    public ResponseEntity<ResponseDTO> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         ResponseDTO responseDTO = new ResponseDTO("Event deleted successfully", 200);
         return ResponseEntity.ok(responseDTO);
     }
+
+
 }

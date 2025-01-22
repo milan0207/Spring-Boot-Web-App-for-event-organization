@@ -1,25 +1,29 @@
 package edu.bbte.idde.kmim2248.service;
 
 import edu.bbte.idde.kmim2248.dao.EventDao;
-import edu.bbte.idde.kmim2248.dao.exception.DaoOperationException;
+import edu.bbte.idde.kmim2248.dao.EventSpecification;
 import edu.bbte.idde.kmim2248.dao.exception.EventNotFoundException;
-import edu.bbte.idde.kmim2248.service.dto.AttendeeDTO;
+import edu.bbte.idde.kmim2248.service.dto.EventFilterDTO;
 import edu.bbte.idde.kmim2248.service.dto.EventOutDTO;
 import edu.bbte.idde.kmim2248.model.Event;
 import edu.bbte.idde.kmim2248.service.dto.EventInDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
-import java.util.List;
 import java.util.Optional;
 
+
 @Service
+@EnableCaching
 public class EventService {
 
-
-    @Autowired
     private final EventDao eventDao;
-    @Autowired
     private final EventMapper eventMapper;
 
     @Autowired
@@ -28,14 +32,8 @@ public class EventService {
         this.eventMapper = eventMapper;
     }
 
-    public List<EventOutDTO> getAllEvents() throws DaoOperationException {
-        return eventDao.findAll().stream()
-                .map(eventMapper::toEventOutDTO)
-                .toList();
-    }
-
-    public EventOutDTO getEventById(Long id) throws EventNotFoundException, DaoOperationException {
-
+    @Cacheable(value = "events", key = "#id")
+    public EventOutDTO getEventById(Long id) throws EventNotFoundException {
         Optional<Event> event = eventDao.findById(id);
         if (event.isEmpty()) {
             throw new EventNotFoundException("Event not found with id: " + id);
@@ -44,16 +42,18 @@ public class EventService {
         }
     }
 
-    public EventOutDTO createEvent(EventInDTO eventDTO) throws DaoOperationException, EventNotFoundException {
-        Event event = eventMapper.toEvent(eventDTO, null);
-        eventDao.save(event);
-        return eventMapper.toEventOutDTO(event);
+    @Cacheable(value = "allEvents",
+            key = "#pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()")
+    public Page<EventOutDTO> getAllEvents(Pageable pageable) {
+        return eventDao.findAll(pageable).map(eventMapper::toEventOutDTO);
     }
 
-    public EventOutDTO updateEvent(Long id, EventInDTO eventDTO)
-            throws DaoOperationException, EventNotFoundException {
+    @Caching(evict = {
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
+    })
+    public EventOutDTO updateEvent(Long id, EventInDTO eventDTO) throws EventNotFoundException {
         Optional<Event> existingEvent = eventDao.findById(id);
-
         eventDao.save(eventMapper.toEvent(eventDTO, id));
         if (existingEvent.isEmpty()) {
             throw new EventNotFoundException("Event not found with id: " + id);
@@ -62,25 +62,41 @@ public class EventService {
         }
     }
 
-    public void deleteEvent(Long id) throws DaoOperationException, EventNotFoundException {
+    @Caching(evict = {
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
+    })
+    public void deleteEvent(Long id) {
         eventDao.deleteById(id);
     }
 
-    public List<EventOutDTO> searchEntities(String keyword) throws DaoOperationException {
-        return eventDao.findByNameContainingIgnoreCase(keyword).stream()
-                .map(eventMapper::toEventOutDTO)
-                .toList();
+
+    @Caching(evict = {
+        @CacheEvict(value = "events", allEntries = true),
+        @CacheEvict(value = "allEvents", allEntries = true)
+    })
+    public EventOutDTO createEvent(EventInDTO eventDTO) {
+        Event event = eventMapper.toEvent(eventDTO, null);
+        eventDao.save(event);
+        return eventMapper.toEventOutDTO(event);
     }
 
-    public List<AttendeeDTO> getAttendeesByEvent(Long eventId)
-            throws DaoOperationException, EventNotFoundException {
-        Event event = eventDao.findById(eventId).orElseThrow(() ->
-                new EventNotFoundException("Event not found with id: " + eventId));
-        return event.getAttendees().stream()
-                .map(AttendeeMapper::toAttendeeDTO)
-                .toList();
+
+
+    @Cacheable(value = "searchResults",
+            key = "#keyword + '_' + #pageable.pageNumber + '_' +"
+                    + " #pageable.pageSize + '_' + #pageable.sort.toString()")
+    public Page<EventOutDTO> searchEntities(String keyword, Pageable pageable) {
+        return eventDao.findByNameContainingIgnoreCase(keyword, pageable).map(eventMapper::toEventOutDTO);
     }
 
+    @Cacheable(value = "filteredEvents",
+            key = "#filterDTO + '_' + #pageable.pageNumber + '_' + "
+                    + "#pageable.pageSize + '_' + #pageable.sort.toString()")
+    public Page<EventOutDTO> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
+        return eventDao.findAll(EventSpecification.filterEvent(filterDTO), pageable)
+                .map(eventMapper::toEventOutDTO);
+    }
 }
 
 
